@@ -1,0 +1,65 @@
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+indent_mode=2
+
+[project]
+name=test_project10
+base_path=/home/yasmain/Ubuntu One/files/opengl/test10
+description=
+
+[long line marker]
+long_line_behaviour=2
+long_line_column=83
+
+[files]
+current_page=0
+FILE_NAME_0=7065;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/Stage/stage1.cpp;0;4
+FILE_NAME_1=6264;C;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/Stage/stage1.h;0;4
+FILE_NAME_2=6178;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/Collision/colli.cpp;0;4
+FILE_NAME_3=25488;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/XMesh/XLoader.cpp;0;4
+FILE_NAME_4=8088;C;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/XMesh/XLoader.h;0;4
+FILE_NAME_5=8297;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/XMesh/XLoader_sub.cpp;0;4
+FILE_NAME_6=4828;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/assist.cpp;0;4
+FILE_NAME_7=192;Make;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/Makefile;0;4
+FILE_NAME_8=2906;C;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/assist.h;0;4
+FILE_NAME_9=848;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/Sound/sound.cpp;0;4
+FILE_NAME_10=51;C;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/Sound/sound.h;0;4
+FILE_NAME_11=829;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/Main.cpp;0;4
+FILE_NAME_12=4645;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/Stage/stage0.cpp;0;4
+FILE_NAME_13=766;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/Stage/stage0.h;0;4
+FILE_NAME_14=609210;C;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/bin/Models/dosei.x;0;4
+FILE_NAME_15=0;C;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/bin/Models/gelge.x;0;4
+
+[build-menu]
+EX_00_LB=実行(_E)
+EX_00_CM=./a.out
+EX_00_WD=%p
+NF_00_LB=メイク(_M)
+NF_00_CM=make
+NF_00_WD=%p
+NF_01_LB=カスタム ターゲットをメイク(_T)
+NF_01_CM=make 
+NF_01_WD=
+NF_02_LB=オブジェクトをメイク(_O)
+NF_02_CM=make %e.o
+NF_02_WD=
+NF_03_LB=make clean
+NF_03_CM=make clean
+NF_03_WD=%p
+C++FT_00_LB=make clean(_C)
+C++FT_00_CM=make clean
+C++FT_00_WD=%p
+C++FT_01_LB=make(_B)
+C++FT_01_CM=make
+C++FT_01_WD=%p
+filetypes=C++;C;
+CFT_00_LB=make clean
+CFT_00_CM=make clean
+CFT_00_WD=%p
+CFT_01_LB=make
+CFT_01_CM=make
+CFT_01_WD=%p

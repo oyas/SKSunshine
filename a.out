@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cd bin
+if [ -e a.out ]; then
+	./a.out
+else
+	echo "a.outがありません。makeしてください"
+fi
