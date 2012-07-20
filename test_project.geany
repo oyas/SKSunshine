@@ -7,8 +7,8 @@ detect_indent=false
 indent_mode=2
 
 [project]
-name=test_project10
-base_path=/home/yasmain/Ubuntu One/files/opengl/test10
+name=test_project10R
+base_path=
 description=
 
 [long line marker]
@@ -16,23 +16,14 @@ long_line_behaviour=2
 long_line_column=83
 
 [files]
-current_page=0
-FILE_NAME_0=7065;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/Stage/stage1.cpp;0;4
-FILE_NAME_1=6264;C;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/Stage/stage1.h;0;4
-FILE_NAME_2=6178;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/Collision/colli.cpp;0;4
-FILE_NAME_3=25488;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/XMesh/XLoader.cpp;0;4
-FILE_NAME_4=8088;C;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/XMesh/XLoader.h;0;4
-FILE_NAME_5=8297;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/XMesh/XLoader_sub.cpp;0;4
-FILE_NAME_6=4828;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/assist.cpp;0;4
-FILE_NAME_7=192;Make;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/Makefile;0;4
-FILE_NAME_8=2906;C;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/assist.h;0;4
-FILE_NAME_9=848;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/Sound/sound.cpp;0;4
-FILE_NAME_10=51;C;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/Sound/sound.h;0;4
-FILE_NAME_11=829;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/Main.cpp;0;4
-FILE_NAME_12=4645;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/Stage/stage0.cpp;0;4
-FILE_NAME_13=766;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/src/Stage/stage0.h;0;4
-FILE_NAME_14=609210;C;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/bin/Models/dosei.x;0;4
-FILE_NAME_15=0;C;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10/bin/Models/gelge.x;0;4
+current_page=5
+FILE_NAME_0=0;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10R/src/Main.cpp;0;4
+FILE_NAME_1=0;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10R/src/assist.cpp;0;4
+FILE_NAME_2=0;C;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10R/src/assist.h;0;4
+FILE_NAME_3=9116;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10R/src/Stage/stage1.cpp;0;4
+FILE_NAME_4=0;C;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10R/src/Stage/stage1.h;0;4
+FILE_NAME_5=0;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10R/src/XMesh/XLoader.cpp;0;4
+FILE_NAME_6=0;C++;0;16;1;1;0;/home/yasmain/Ubuntu One/files/opengl/test10R/src/XMesh/XLoader_sub.cpp;0;4
 
 [build-menu]
 EX_00_LB=実行(_E)

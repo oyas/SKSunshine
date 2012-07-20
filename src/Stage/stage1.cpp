@@ -13,14 +13,13 @@
  *-----------------------------------------------------------------------------------*/
 
 //コンストラクタ（初期化）
-Stage1::Stage1() :ita(24.0, 24.0), ita2(24.0, 24.0)//, sound("whistle.wav")
+Stage1::Stage1() :ita(24.0, 24.0), ita2(24.0, 24.0), sound("whistle.wav")
 	//板のコンストラクタの引数を渡してやる。メンバーイニシャライザ
 	//(このコンストラクタが実行される前に、板のコンストラクタは実行される)
 {
 	//Xファイル読み込み
 	char a[]="Models/dosei.x";
 	model.Load(a, 0);
-printf("Stage1 Check1\n");
 	//Xオブジェクト作成
 	dosei.setXModel(&model);
 	dosei.pos.y = 10.0;
@@ -39,7 +38,7 @@ printf("Stage1 Check1\n");
 	//カメラ角度
 	cam_z=20.0; cam_r=M_PI; cam_rx=M_PI_4/2;
 	//どせいに関するもの初期化
-	dosei_action=0;
+	//dosei_action=0;
 	dash_vec.x=0.0; dash_vec.y=0.0; dash_vec.z=1.0;
 	dash_svec.x=1.0; dash_svec.y=0.0; dash_svec.z=0.0;
 	//キー
@@ -57,16 +56,12 @@ printf("Stage1 Check1\n");
 	Vector3 v[3] = { {4.8, 2.2, 2.2},
 						{-0.2, 7.0, -6.0},
 						{-1.6, 1.8, 2.0}  };
-	//sanka.Set(v);
-	//sanka.pos.z = -4.0;
 	box.Set(v, "box2.png");	//直方体
 	box.pos.z = 42.0;
 	//当たり判定があったか
 	onface = 0;
 	spacekey = 0;
-	backjamp =0;
 	
-printf("stage1 Check2\n");
 	//////////////////////////
 	//背景作成
 	//背景画像読み込み
@@ -198,50 +193,13 @@ printf("stage1 Check2\n");
 	}
 	//ここまで
 	//////////////////////////////
-/*
-	//////////////////////////
-	// 影作成
-	//画像読み込み
-	{
-	pngInfo info;
-	textureShadow = pngBind("clear.png", PNG_NOMIPMAP, PNG_ALPHA, &info, GL_CLAMP, GL_NEAREST, GL_NEAREST);
 	
-	DisplayList_Shadow = glGenLists(1);//ディスプレイリストを作成
-	glNewList(DisplayList_Shadow,GL_COMPILE); //コンパイルのみ
-	
-	glLoadIdentity();
-	glEnable(GL_BLEND);// ブレンド有効
-	
-	glColor3f(1.0, 1.0, 1.0);
-	//UV
-	float uv[4][2] = { {0.0,0.0}, {0.0,1.0}, {1.0,1.0}, {1.0,0.0} };
-	//pos
-	float pos[4][3] = { {1.0,0.0,1.0}, {1.0,0.0,-1.0}, {-1.0,0.0,-1.0}, {-1.0,0.0,1.0} };
-	//テクスチャマッピング有効
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, textureShadow);//バインド
-	glBegin(GL_QUADS);
-		for(int i=0; i<4; i++){
-			glTexCoord2fv( uv[i] );
-			glVertex3fv( pos[ i ] );
-		}
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, 0);//バインドしたのをもとに戻す
-	//元に戻す
-	glDisable(GL_TEXTURE_2D);
-	glDisable(GL_BLEND);// ブレンド無効
-	
-	glEndList();	//ディスプレイリストおわり
-	}
-	//ここまで
-	//////////////////////////////
-*/	
 	//ゲーム関連
 	game = 5;
 	game_timer = 0;
 	sprintf(str_a,"x%d",game);
 	
-	printf("stage1 初期化完了。\n");
+	printf("stage1 初期化完了。\n");	//デバッグ用
 }
 
 
@@ -249,7 +207,8 @@ printf("stage1 Check2\n");
 void Stage1::Disp(){
 	float _x,_y,_z;
 	
-	glCallList(DisplayList_BACK);	//背景描画
+	//背景描画
+	glCallList(DisplayList_BACK);
 	
 	glLoadIdentity();
 	//カメラの位置
@@ -259,11 +218,11 @@ void Stage1::Disp(){
 	//ライトの位置セット
 	glLightfv(GL_LIGHT0, GL_POSITION, light0pos);
 	
-	//カメラ
+	//カメラの位置セット
 	gluLookAt(dosei.pos.x+_x, dosei.pos.y+_y, dosei.pos.z+_z, 
 		dosei.pos.x,dosei.pos.y,dosei.pos.z, 0.0,1.0,0.0);
 	
-	//キー処理
+	//キー処理(どせいの移動)
 	if(key_on & 16){	//bキー
 		dosei.angle += 1.0;
 		//どせいさんの向いてる方向計算
@@ -276,43 +235,10 @@ void Stage1::Disp(){
 		dash_vec.x = -sin(dosei.angle/180 * M_PI);
 		dash_vec.z = -cos(dosei.angle/180 * M_PI);
 	}else if(key_on & 64){	//space
-		if(onface&&spacekey<1){
-			switch(dosei_action){
-			case 0:
-				if( backjamp&7 ){
-					dosei.speed.y+=1.8;
-				}else{
+		if(onface&&spacekey<1){	//床に接地していて、スペースキーが押された瞬間
 					dosei.speed.y+=0.4;
-				}
-					//dosei.speed += dash_vec * DOSEI_IDORYOU * 0.5;
-					dosei_action = 1;
-				break;
-			case 1:
-				if(onface<5){
-					dosei.speed.y+=0.5;
-					dosei_action = 2;
-				}else{
-					dosei.speed.y+=0.4;
-				}
-				//dosei.speed += dash_vec * DOSEI_IDORYOU * 0.5;
-				break;
-			case 2:
-				if(onface<30){
-					dosei.speed.y+=2.0;
-					dosei.speed += dash_vec * DOSEI_IDORYOU * 50.0;
-					dosei_action = 0;
-				}else{
-					dosei.speed.y+=0.4;
-					//dosei.speed += dash_vec * DOSEI_IDORYOU * 0.5;
-					dosei_action = 1;
-				}
-				break;
-			default:
-				dosei_action = 0;
-				break;
-			}
 		}
-		spacekey++;
+		spacekey++;	//スペースキーが押されている間はspacekey>0
 	}else{
 		spacekey=0;
 	}
@@ -327,47 +253,27 @@ void Stage1::Disp(){
 	}
 	if(yaziru & 4 || key_on&1024){	//up
 		dosei.force += dash_vec * DOSEI_IDORYOU;
-		backjamp |= 16;
-		if(backjamp&32){
-			backjamp += 5;
-		}
 	}
 	if(yaziru & 8 || key_on&2048){	//down
 		dosei.force -= dash_vec * DOSEI_IDORYOU;
-		backjamp |= 32;
-		if(backjamp&16){
-			backjamp += 5;
-		}
-	}else{
-		backjamp &= ~32;
 	}
-	if(!(yaziru & 4) ){
-		backjamp &= ~16;
-	}
-	if( backjamp&7 ) backjamp--;	//1〜3bitのどれかが立っていたらマイナス
 	
-	//救出
+	//救出(どせいが下に落ちた場合の処理)
 	if(dosei.pos.y<-50){
-		if(game>0 && game<6){
+		if(game>0 && game<6){	//残機あり、クリアじゃない時
 			game--;
 			sprintf(str_a,"x%d",game);
 		}
 		if(game>0){
-			if(dosei.pos.z>210.0){
-				dosei.pos.x = 0.0;
-				dosei.pos.y = 10.0;
-				dosei.pos.z = 210.0;
-				dosei.speed = 0.0;
-			}else{
-				dosei.pos.x = 0.0;
-				dosei.pos.y = 10.0;
-				dosei.pos.z = 0.0;
-				dosei.speed = 0.0;
-			}
+			//初期位置へ戻す
+			dosei.pos.x = 0.0;
+			dosei.pos.y = 10.0;
+			dosei.pos.z = 0.0;
+			dosei.speed = 0.0;
 		}
 	}
 		
-	//三角の回転
+	//1番目の緑の箱の回転
 	MATRIX4x4 m;
 	float rot=0.01;
 	MatrixIdentity(m.m);
@@ -375,27 +281,22 @@ void Stage1::Disp(){
 	m.m[1][0] = sin(rot);
 	m.m[0][1] = -m.m[1][0];
 	m.m[1][1] = m.m[0][0];
-	//sanka.addrot(m);
 	box.addrot(m);
 	
-		//当たり判定・影判定
-		/*if(dosei.speed.y>-0.3)*/ dosei.speed.y -= 0.02;	//重力
+		
+		//当たり判定 描画・物理処理等を各オブジェクトごとに行う
+		
+		dosei.speed.y -= 0.02;	//重力
 		Vector3 speed = dosei.speed;
 		if( (dosei.force.x<0 && speed.x>dosei.force.x)||(dosei.force.x>0 && speed.x<dosei.force.x) ) speed.x = dosei.force.x;
 		if( (dosei.force.y<0 && speed.y>dosei.force.y)||(dosei.force.y>0 && speed.y<dosei.force.y) ) speed.y = dosei.force.y;
 		if( (dosei.force.z<0 && speed.z>dosei.force.z)||(dosei.force.z>0 && speed.z<dosei.force.z) ) speed.z = dosei.force.z;
 		Vector3 bspeed = speed;	//出力用
-		//影用
-		float shadow_y = dosei.pos.y+0.01;
 		//床１
 		Vector3 nvec;
 		nvec = colliIta.GetNormalForce(dosei.pos, speed);	//垂直抗力計算
 		speed.y += nvec.y;
-		//床2の計算
-		nvec = colliIta.GetNormalForce(dosei.pos-ita2.pos, speed);
-		speed.y += nvec.y;
-		//三角形OBJ
-		//sanka.NormalForce(dosei.pos, speed);
+		//箱OBJ
 		box.NormalForce(dosei.pos, speed);
 	
 	//テクスチャマッピング有効
@@ -417,42 +318,21 @@ void Stage1::Disp(){
 		//オブジェクトグループ5
 		objg5.Disp_Colli( dosei.pos, speed );
 		
-		//摩擦
-		//dosei.speed.x -= dosei.speed.x;
-		//dosei.speed.z -= dosei.speed.z;
+		//摩擦 接地していたら止まる
 		if( speed.y-bspeed.y != 0.0){
-			/*float a = sqrtf( speed.x*speed.x + speed.y*speed.y + speed.z*speed.z );
-			if(a>0.02){
-				speed -= speed * (1/a) * 0.02;
-				//a = sqrtf( dosei.speed.x*dosei.speed.x + dosei.speed.y*dosei.speed.y + dosei.speed.z*dosei.speed.z );
-				//dosei.speed -= dosei.speed * (1/a) * 0.1;
-			}else if(a<=0.02){
-				speed = 0.0;
-				//dosei.speed = 0.0;
-			}*/
 			dosei.speed = 0.0;
-			if( onface++ > 3) dosei_action=0;	//3段ジャンプ用
+			onface = 1;
 		}else onface=0;
 		dosei.pos += speed;	//適用
-		//dosei.speedにも適用
-		/*Vector3 s = speed - bspeed;
-		if( (dosei.speed.x<0 && (dosei.speed.x+=s.x)>0)||(dosei.speed.x>0 && (dosei.speed.x+=s.x)<0) ) dosei.speed.x = 0.0;
-		if( (dosei.speed.y<0 && (dosei.speed.y+=s.y)>0)||(dosei.speed.y>0 && (dosei.speed.y+=s.y)<0) ) dosei.speed.y = 0.0;
-		if( (dosei.speed.z<0 && (dosei.speed.z+=s.z)>0)||(dosei.speed.z>0 && (dosei.speed.z+=s.z)<0) ) dosei.speed.z = 0.0;*/
-	//出力用文字列
-	sprintf(str_t, "speed.y: %f %f", dosei.speed.y, dosei.speed.y-bspeed.y);
+		
+		//出力用文字列
+		sprintf(str_t, "speed.y: %f %f", dosei.speed.y, dosei.speed.y-bspeed.y);
 	
 	
 	//床描画
 	ita.Render();
-	ita2.Render();
-	//テクスチャマッピング有効
-	//glEnable(GL_TEXTURE_2D);
-	//glEnable(GL_BLEND);
 	//どせいさん描画
 	if( !(key_on & 128) ) dosei.Render();
-	//三角形描画
-	//sanka.Render();
 	//直方体描画
 	box.Render();
 	//テクスチャマッピング無効
@@ -470,7 +350,7 @@ void Stage1::Disp(){
 	if(key_on & 1){
 		cam_r += DOSEI_CAMRA;
 		if(cam_r>2*M_PI) cam_r -= 2*M_PI;
-		//どせいも
+		//どせいも回転
 		dosei.angle += DOSEI_CAMRA*180/M_PI;
 		dash_vec.x = -sin(dosei.angle/180 * M_PI);
 		dash_vec.z = -cos(dosei.angle/180 * M_PI);
@@ -480,7 +360,7 @@ void Stage1::Disp(){
 	if(key_on & 2){
 		cam_r -= DOSEI_CAMRA;
 		if(cam_r<-2*M_PI) cam_r += 2*M_PI;
-		//どせいも
+		//どせいも回転
 		dosei.angle -= DOSEI_CAMRA*180/M_PI;
 		dash_vec.x = -sin(dosei.angle/180 * M_PI);
 		dash_vec.z = -cos(dosei.angle/180 * M_PI);
@@ -501,7 +381,7 @@ void Stage1::Disp(){
 	}
 	
 	//サウンド
-	//sound.stream();
+	sound.stream();
 	
 	
 	//クリア判定
@@ -510,12 +390,12 @@ void Stage1::Disp(){
 	}
 	//MISS or CLEAR
 	if(game==6){	//CLEAR
-		glCallList(DisplayList_CLEAR);	//描画
+		glCallList(DisplayList_CLEAR);	//クリア表示
 		if(game_timer++ > 120){
-			ChangeStage(new Stage0);
+			ChangeStage(new Stage0);	//Stage0に戻る
 		}
 	}else if(game<=0){	//MISS
-		glCallList(DisplayList_MISS);	//描画
+		glCallList(DisplayList_MISS);	//ミス表示
 		if(game_timer++ > 60){
 			ChangeStage(new Stage0);
 		}
@@ -526,15 +406,15 @@ void Stage1::Disp(){
 void Stage1::Disp2D(){
 	glColor4f(0.0,0.0,0.0, 1.0);	//カラー
 	DRAW_STRING(10, 10, str_a, GLUT_BITMAP_TIMES_ROMAN_24);
-	/*DRAW_STRING(10, 75, str_t, GLUT_BITMAP_TIMES_ROMAN_24);
-	DRAW_STRING(10, 50, str, GLUT_BITMAP_TIMES_ROMAN_24);*/
+	DRAW_STRING(10, 75, str_t, GLUT_BITMAP_TIMES_ROMAN_24);
+	DRAW_STRING(10, 50, str, GLUT_BITMAP_TIMES_ROMAN_24);
 }
 
 //入力処理
 void Stage1::Input(char event, int key, int x, int y){
 	//チェックするボタンの登録
-	static char size = 14;
-	static int Keys[] = {
+	static char size = 14;	//keysの要素数
+	static int Keys[] = {	//チェックするボタン
 		'a',	//1
 		's',	//2
 		'w',	//4

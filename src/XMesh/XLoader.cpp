@@ -1,6 +1,9 @@
 //----------------------------------------------------
 // File : XLoader.cpp
 //
+// 参考： Project Asura http://asura.iaigiri.com/OpenGL/gl44.html
+//        3D格闘ゲームプログラミング(著者：松浦健一郎／司ゆき　出版社：SoftBank Creative)
+//
 // かなり変更を加えた。2011.6
 // ワンスキンメッシュのみに対応。三角形ポリゴン対応。四角形にも対応(三角形に分割)。
 // アニメーションに対応。UVテクスチャ(PNGのみ)に対応。
@@ -445,7 +448,6 @@ bool XModel::Load_element()
 			}
 			//読み飛ばす
 			EndNode();	//ノードが終わるとこまで飛ばす
-			printf("Check11\n");
 		}
 
 		//　MeshTextureCoordsの場合 メッシュテクスチャ座標
@@ -652,26 +654,19 @@ bool XModel::Load_element()
 		// SkinWeights スキンウェイトの場合
 		else if( CheckToken("SkinWeights") )
 		{
-			/*
-			printf("Check1\n");
 			//SkinWeightsの位置保存(最後、AnimationSetで読み込む)
 			SkinWeightsPointer.push_back(Pointer);
 			//ノードを終わりまで飛ばす。
 			GetToken("{");
 			EndNode();
-			printf("Check2\n");
-			*/
-			Load_SkinWeights();
 		}
 		
 		// AnimationSet アニメーションセットの場合
 		else if( CheckToken("AnimationSet") ) {
-			/*
 			//記録
 			char *NowPointer = Pointer;
 			
 			//SkinWeightの読み込みもやっちゃう
-			printf("Check3\n");
 			for( int i=0; i<SkinWeightsPointer.size(); i++ ){
 				//セット
 				Pointer = SkinWeightsPointer[i];
@@ -679,11 +674,10 @@ bool XModel::Load_element()
 				if( Load_SkinWeights() == false )
 					return false;
 			}
-			printf("Check4\n");
 			
 			//現在の位置に戻す
 			Pointer = NowPointer;
-			*/
+			
 			//アニメーション読み込み
 			return Load_AnimationSet();
 		}
@@ -699,23 +693,18 @@ bool XModel::Load_AnimationSet()
 {
 	printf("AnimationSet 読み込み開始\n");
 	
-printf("check1\n");
 	//XAnimationクラスのインスタンス作成
 	XAnimation* anim=new XAnimation();
+	Animation.push_back(anim);
 	anim->time=0;
 	anim->weight=0;
-printf("check2\n");
 	
 	//アニメーションセット名取得
 	GetToken();
-printf("check2 %d\n",strlen(Token));
-	//anim->name=new char[strlen(Token)+2];
-printf("check2\n");
-	//strcpy(anim->name, Token);
-printf("check2\n");
+	anim->name=new char[strlen(Token)+1];
+	strcpy(anim->name, Token);
 	
 	GetToken("{");
-printf("check3\n");
 	
 	//アニメーション読み取り
 	while (*Pointer!='\0') {
@@ -726,24 +715,18 @@ printf("check3\n");
 		
 		//"Animation”だったら読み取り
 		if ( CheckToken("Animation") ) {	
-printf("check4\n");
 			//アニメーションキークラスのインスタンス作成
-			XAnimationKey* key = new XAnimationKey();	
-printf("check4_0\n");	
-printf("check4_1\n");
+			XAnimationKey* key = new XAnimationKey();
+			anim->key.push_back(key);
 			
 			GetToken();		//１個読み飛ばし
 			if ( strcmp(Token, "{") ) GetToken("{");	//アニメーション名があった場合、もう一個飛ばす
 			
 			//フレームの名前取得、フレーム番号を検索して格納
 			GetToken("{");
-			GetToken();	
-printf("check4_2\n");
-			
-			//key->frameName=new char[strlen(Token)+1];
-printf("check4_3\n");
-			//strcpy(name, Token);		//名前格納
-			//string 
+			GetToken();
+			key->frameName=new char[strlen(Token)+1];
+			strcpy(key->frameName, Token);		//名前格納
 			key->frameIndex=FindFrame(key->frameName)->index;	//フレームを検索して格納
 			if( !(key->frameIndex) ) return false;	//フレームが見つからなかった場合
 			GetToken("}");
@@ -752,7 +735,6 @@ printf("check4_3\n");
 			GetToken("{");
 			GetToken("4");	//タイプが4であることを確認
 			
-printf("check5\n");
 			//キー数を取得。キー数分だけ読み取り。
 			int key_count=GetIntToken();
 			for (int i=0; i<key_count; i++) {
@@ -771,12 +753,8 @@ printf("check5\n");
 			}
 			GetToken("}");	
 			GetToken("}");
-			//キー追加
-			anim->key.push_back(key);
 		}
 	}
-	//追加
-	Animation.push_back(anim);
 	return true;
 }
 

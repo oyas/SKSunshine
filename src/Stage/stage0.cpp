@@ -220,13 +220,13 @@ void Stage0::Disp()
 		return;
 	}
 	
-	//glCallList(DisplayList_TITLE);	//タイトル描画
+	glCallList(DisplayList_TITLE);	//タイトル描画
 	
 	if( timer++ < 30 ){
 		glCallList(DisplayList_Space);	//「スペースキーでスタート」
 	}else if(timer>=60){
 		timer=0;
-		//if(setumei<5) setumei++;	//説明
+		if(setumei<5) setumei++;	//説明
 	}
 }
 

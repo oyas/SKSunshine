@@ -26,18 +26,16 @@
 
 #include <iostream>
 #include <cmath>
+#include <vector>
 
 #include <cstring>
 #include <cstdio>
 #include <fstream>
-#include <vector>
 //windows or other
-#if 1
 #ifdef WIN32
 	#include <windows.h>
 #else
 	#define ZeroMemory(x,y) memset(x,0x00,y)
-#endif
 #endif
 
 using namespace std;
@@ -236,7 +234,6 @@ public:
 	vector<float> time;	//時間の配列。キー分だけある。
 	vector<MATRIX4x4*> matrix;	//行列の配列。キー分だけある。
 	char *frameName;	//フレームの名前
-	//frameName;
 	int frameIndex;		//フレーム番号
 	
 	XAnimationKey();

@@ -1,3 +1,5 @@
+//どせいさん
+// http://asura.iaigiri.com/OpenGL/gl44.html
 xof 0302txt 0064
 template Header {
  <3D82AB43-62DA-11cf-AB39-0020AF71E433>

@@ -164,7 +164,7 @@ private:
 	//sankakOBJ sanka;	//三角形クラス
 	boxOBJ box;		//直方体
 	//char c[512];
-	//Sound sound;	//サウンドクラス
+	Sound sound;	//サウンドクラス
 	int onface;	//当たり判定があったかどうか(床の上に何秒いたか)
 	int spacekey;	//スペースキーが押されてから何秒か
 	int backjamp;	//バックジャンプ用
