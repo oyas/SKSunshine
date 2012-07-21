@@ -18,13 +18,13 @@ Stage1::Stage1() :ita(24.0, 24.0), ita2(24.0, 24.0), sound("whistle.wav")
 	//(このコンストラクタが実行される前に、板のコンストラクタは実行される)
 {
 	//Xファイル読み込み
-	char a[]="Models/dosei.x";
+	char a[]="Models/anim2.x";
 	model.Load(a, 0);
 	//Xオブジェクト作成
 	dosei.setXModel(&model);
 	dosei.pos.y = 10.0;
 	dosei.pos.z = 0.0;
-	dosei.offset.y=1.0;
+	dosei.offset.y=0.0; //1.0;
 	//どせい向き
 	dosei.angle = 180;
 	dosei.ang.y = 1.0;
@@ -268,7 +268,7 @@ void Stage1::Disp(){
 			//初期位置へ戻す
 			dosei.pos.x = 0.0;
 			dosei.pos.y = 10.0;
-			dosei.pos.z = 0.0;
+			dosei.pos.z = (dosei.pos.z>210 ? 210.0 : 0.0);	//アイスブロックまでいってたらその直前から再開
 			dosei.speed = 0.0;
 		}
 	}
@@ -326,7 +326,7 @@ void Stage1::Disp(){
 		dosei.pos += speed;	//適用
 		
 		//出力用文字列
-		sprintf(str_t, "speed.y: %f %f", dosei.speed.y, dosei.speed.y-bspeed.y);
+		//sprintf(str_t, "speed.y: %f %f", dosei.speed.y, dosei.speed.y-bspeed.y);
 	
 	
 	//床描画
