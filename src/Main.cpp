@@ -17,6 +17,7 @@ int WindowWidth = 400;	//ウィンドウ幅
 int WindowHeight = 400;	//ウィンドウ高さ
 const char WindowTitle[] = "kunekune";	//ウィンドウタイトル
 StageClass *Stage, *NextStage;	//ステージクラスのポインタ
+bool FullScreenMode = false;	//フルスクリーンモードかどうか
 
 //関数のプロトタイプ宣言
 void Init();
@@ -63,6 +64,7 @@ int main(int argc, char *argv[])
 	}
 	glutEnterGameMode();
 	glutSetCursor(GLUT_CURSOR_NONE);	//マウスカーソルを消す
+	FullScreenMode = true;
 #else
 	glutCreateWindow(WindowTitle);
 #endif
@@ -215,8 +217,12 @@ void Reshape(int x, int y)
 	WindowHeight = y;
 	
 	//　サイズチェック
-	if( WindowWidth < 1 ) WindowWidth = 1;
-	if( WindowHeight < 1 ) WindowHeight = 1;
+//	if( WindowWidth < 1 ) WindowWidth = 1;
+//	if( WindowHeight < 1 ) WindowHeight = 1;
+	//　ウィンドウサイズを16:9に制限
+	if( !FullScreenMode && (float)WindowWidth / (float)WindowHeight > 16.0 / 9.0 ){
+		glutReshapeWindow( WindowHeight * 16 / 9 , WindowHeight );
+	}
 	
 	//　ビューポートの設定
 	glViewport(0, 0, WindowWidth, WindowHeight);
@@ -363,7 +369,6 @@ void SpecialUp(int key, int x, int y)
 void FullScreen(void)
 {
 #if !GAMEMODE_FULLSCREEN
-	static bool FullScreenMode = false;
 	static int beforeWidth;
 	static int beforeHeight;
 	FullScreenMode = !FullScreenMode;
