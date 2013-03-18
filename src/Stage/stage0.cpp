@@ -3,6 +3,7 @@
 #include "stage0.h"
 #include "stage1.h"
 
+#define NEXT_STAGE Stage1
 
 Stage0::Stage0()
 {
@@ -55,7 +56,7 @@ void Stage0::Disp()
 	if( setu_mes ){
 		glCallList(DisplayList_Setumei);	//説明
 		if(space){
-			if(setumei>5) ChangeStage(new Stage1);
+			if(setumei>5) ChangeStage(new NEXT_STAGE);
 		}else{
 			setumei++;
 		}
@@ -84,7 +85,7 @@ void Stage0::Input(char event, int key, int x, int y)
 		case SC_INPUT_KEY_DOWN:	//キーが押されたとき
 			if( key == ' ' ){	//スペースキーが押されたとき
 				if(setumei < 5){
-					ChangeStage(new Stage1);
+					ChangeStage(new NEXT_STAGE);
 				}else{
 					space = true;
 				}

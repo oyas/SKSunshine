@@ -1,92 +1,74 @@
-//stage1.h
-#ifndef _STAGE1_H
-#define _STAGE1_H
+// stage2.h
+
+#ifndef _STAGE2_H
+#define _STAGE2_H
 
 //インクルード
 #include "../assist.h"
 #include "object.h"
+#include "stage1.h"
+
+#include <stdlib.h>	//乱数を使うので
+#include <time.h>	//乱数初期化用
 
 
+//定数
+#define X_RETU 20	//横マス目
+#define Y_GYO 20	//縦
+#define ST_MAX 3	//１度に伸ばす最大距離
 
-/*-----------------------------------------------------------------------------------*
-	オブジェクトグループ
-	オブジェクトをまとまりにして管理
- *-----------------------------------------------------------------------------------*/
-//1
-class OBJgroup1{
-private:
-	boxOBJ box[3];	//ボックス３つ
-	Ita ita;	//床クラス
-	Colli colliIta;	//板の当たり判定クラス
-	boxOBJ box1;		//直方体
-	float radius;	//判定球の半径
-	Vector3 pos;	//位置
-public:
-	void Disp_Colli(Vector3 &_pos, Vector3 &_speed);	//描画と当たり判定
-	OBJgroup1();
-};
-
-//2
-class OBJgroup2{
-private:
-	boxOBJ box[4];	//ボックス4つ
-	Vector3 box_pos[3];	//boxは動くため、初期位置を記憶しておく
-	float radius;	//判定球の半径
-	Vector3 pos;	//位置
-	float rot;	//回転角(各boxの位置)
-public:
-	void Disp_Colli(Vector3 &_pos, Vector3 &_speed);	//描画と当たり判定
-	OBJgroup2();
-};
-
-//3
-class OBJgroup3{
-private:
-	boxOBJ box[16];	//ボックス8x2
-	Vector3 box_pos[15];	//boxは動くため、初期位置を記憶しておく
-	float radius;	//判定球の半径
-	Vector3 pos;	//位置
-	int box_action;	//boxの動作 1:奥へ移動 2:回転 3:前へ移動 4:回転
-	float rot;	//回転角(各boxの位置)
-public:
-	void Disp_Colli(Vector3 &_pos, Vector3 &_speed);	//描画と当たり判定
-	OBJgroup3();
-};
-
-//4
-class OBJgroup4{
-private:
-	boxOBJ box[72];	//ボックス12*6つ
-	//Vector3 box_pos[3];	//boxは動くため、初期位置を記憶しておく
-	float radius;	//判定球の半径
-	Vector3 pos;	//位置
-	int box_action;	//boxの動作 
-	int rot;	//回転角(各boxの位置)
-	MATRIX4x4 matx, matz, mat_z;	//回転行列
-public:
-	void Disp_Colli(Vector3 &_pos, Vector3 &_speed);	//描画と当たり判定
-	OBJgroup4();
-};
-
-//5
-class OBJgroup5{
-private:
-	boxOBJ box[2];	//ボックス2つ
-	float radius;	//判定球の半径
-	Vector3 pos;	//位置
-public:
-	bool onCLEAR;	//box[0]の上に乗っているかどうか
-	void Disp_Colli(Vector3 &_pos, Vector3 &_speed);	//描画と当たり判定
-	OBJgroup5();
-};
-
+#define BOX_SIZE 8.0 //一マスの大きさ
 
 
 /*-----------------------------------------------------------------------------------*
-	ステージ１　クラス
-	Main.cppでインスタンスが作られ関数が呼ばれる
+		迷路作成
  *-----------------------------------------------------------------------------------*/
-class Stage1 : public StageClass{
+
+class OBJgroup_Meiro{
+private:
+	boxOBJ box, box_goal;	//ボックス
+	Vector3 pos;	//位置
+
+	//迷路用配列
+	int miti[X_RETU][Y_GYO], yokoba[X_RETU][Y_GYO+1], tateba[X_RETU+1][Y_GYO];
+	
+	//ゴール関係
+	int miti_max;	//スタートからの最大の距離
+	int miti_x, miti_y;	//↑そのポイントの座標(ゴールの座標)
+	
+	//前回チェックした場所（そこから道をのばした）
+	int check_x, check_y;
+	
+	//現在道をのばすか検討中の場所
+	int now_x, now_y;
+	
+	//迷路が完成したかどうか
+	bool end_f;
+	
+	
+	//迷路作成関数
+	
+	void check();
+	
+	bool nobasu();
+	
+	int tuna(int x, int y);
+
+	//当たり判定用
+	void box_colli(int x, int y, boxOBJ &box, Vector3 &v, Vector3 &_speed );
+
+public:
+	bool onCLEAR;	//ゴール判定
+	OBJgroup_Meiro();	
+	void Disp_Colli(Vector3 &_pos, Vector3 &_speed);	//描画と当たり判定
+};
+
+
+/*-----------------------------------------------------------------------------------*
+	ステージ２　クラス
+	stage0.cppでインスタンスが作られ関数が呼ばれる
+ *-----------------------------------------------------------------------------------*/
+class Stage2 : public StageClass{
 private:
 	//どせい関連	
 	XModel model;		//Xモデルクラス
@@ -109,10 +91,7 @@ private:
 	int backjamp;	//バックジャンプ用 特殊ジャンプ用
 	//オブジェクトグループ
 	OBJgroup1 objg1;	//オブジェクトグループ１
-	OBJgroup2 objg2;	//オブジェクトグループ２
-	OBJgroup3 objg3;	//3
-	OBJgroup4 objg4;	//4
-	OBJgroup5 objg5;	//5
+	OBJgroup_Meiro objg_meiro; //迷路
 	//背景
 	GLuint textureBACK;	//背景のテクスチャ
 	GLuint DisplayList_BACK;	//背景のディスプレイリスト
@@ -125,10 +104,12 @@ private:
 	//ゲームクリアーorミス
 	char game;	//1〜5:残機 6:CLEAR 0:MISS
 	int game_timer;	//ゲーム終了に使うtimer 
+	//どせい高速化用
+	bool turbo;
 	
 public:
 	//コンストラクタ
-	Stage1();
+	Stage2();
 	
 	//画面再描画時によばれる(1フレーム毎に呼ばれる)
 	virtual void Disp();
@@ -140,9 +121,9 @@ public:
 	virtual void Input(char event, int key, int x, int y);
 	
 	//デストラクタ
-	virtual ~Stage1();
+	virtual ~Stage2();
 };
 
 
 
-#endif	//_STAGE1_H
+#endif	//_STAGE2_H

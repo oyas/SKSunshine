@@ -1,6 +1,7 @@
 LIBS          = -lglut -lGLU -lGL -lglpng -lalut
 OBJS          = src/Main.o src/assist.o src/Stage/stage1.o src/XMesh/XLoader.o \
-				src/Collision/colli.o src/Sound/sound.o src/Stage/stage0.o
+				src/Collision/colli.o src/Sound/sound.o src/Stage/stage0.o \
+				src/Stage/object.o src/Stage/stage2.o
 PROGRAM       = bin/a.out
 LIBS_WIN      = -lglpng -lopengl32 -lfreeglut -lglu32 -lglew32 -lOpenAL32 -lalut
 PROGRAM_WIN   = bin/a.exe
