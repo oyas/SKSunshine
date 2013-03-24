@@ -2,6 +2,7 @@
 
 #include "stage0.h"
 #include "stage1.h"
+#include "stage2.h"
 
 #define NEXT_STAGE Stage1
 
@@ -89,6 +90,9 @@ void Stage0::Input(char event, int key, int x, int y)
 				}else{
 					space = true;
 				}
+			}
+			if( key == '2' ){	//2が押されたときStage2へ
+				ChangeStage(new Stage2);
 			}
 			break;
 		case SC_INPUT_KEY_UP:	//キーが押されたとき
