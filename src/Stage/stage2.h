@@ -28,6 +28,7 @@ class OBJgroup_Meiro{
 private:
 	boxOBJ box, box_goal;	//ボックス
 	Vector3 pos;	//位置
+	GLuint DisplayList;	//ディスプレイリスト
 
 	//迷路用配列
 	int miti[X_RETU][Y_GYO], yokoba[X_RETU][Y_GYO+1], tateba[X_RETU+1][Y_GYO];

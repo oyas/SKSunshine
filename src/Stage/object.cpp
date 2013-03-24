@@ -342,7 +342,9 @@ void boxOBJ::NormalForce(Vector3 &_pos, Vector3 &_speed)
 			_speed += nvec;
 		}
 	}
-	if(laston_i>0) laston |= 1;
+	if(laston_i>0){
+		laston |= 1;
+	}
 	
 	//移動したとき
 	if( move.x!=0.0 || move.y!=0.0 || move.z!=0.0 ){

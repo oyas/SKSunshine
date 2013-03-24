@@ -35,7 +35,7 @@
 
 //////////////////////
 // 定数定義
-#define GAME_CLEAR 100	//クリア
+#define GAME_CLEAR 100	//クリア定数
 
 // backjamp用定数
 #define JAMP_B_TIMER 7	//バックジャンプ用タイマー（フィルター）
@@ -151,7 +151,7 @@ Stage2::Stage2() : sound("whistle.wav")
 	//////////////////////////
 	//背景作成
 	//背景画像読み込み
-	float pos[4][3] = { {2.2,1.3,0.0}, {2.2,-1.3,0.0}, {-2.2,-1.3,0.0}, {-2.2,1.3,0.0} };
+	float pos[4][3] = { {2.3,1.3,0.0}, {2.3,-1.3,0.0}, {-2.3,-1.3,0.0}, {-2.3,1.3,0.0} };
 	DisplayList_BACK = CreatePNGDisplayList("yama.png", &textureBACK, pos, false);
 	//////////////////////////////
 	
@@ -478,6 +478,8 @@ OBJgroup_Meiro::OBJgroup_Meiro()
 
 	onCLEAR = false;
 	
+	DisplayList = 0;
+	
 	//迷路用配列
 	for(int x=0; x<X_RETU; x++ ){
 		for(int y=0; y<Y_GYO; y++ ){	
@@ -531,41 +533,84 @@ void OBJgroup_Meiro::Disp_Colli(Vector3 &_pos, Vector3 &_speed)
 	
 	glTranslatef(pos.x, pos.y, pos.z);	//移動
 	
-	//描画
-	for(int x=0; x<X_RETU; x++ ){
-		for(int y=0; y<Y_GYO; y++ ){
-			//道	
-			if( miti[x][y] ){
-				box.pos.x = x * BOX_SIZE * 2.0;	
-				box.pos.z = y * BOX_SIZE * 2.0;	
-				box.Render();
-			}
-			//横つなぎ
-			if( y < Y_GYO-1 && yokoba[x][y] == 1 ){
-				box.pos.x = x * BOX_SIZE * 2.0;
-				box.pos.z = y * BOX_SIZE * 2.0 + BOX_SIZE;
-				box.Render();
-			}
-			//縦つなぎ
-			if( x < X_RETU-1 && tateba[x][y] == 1 ){
-				box.pos.x = x * BOX_SIZE * 2.0 + BOX_SIZE;
-				box.pos.z = y * BOX_SIZE * 2.0;
-				box.Render();
+	if( !end_f ){
+		//迷路作成途中
+		
+		//描画
+		for(int x=0; x<X_RETU; x++ ){
+			for(int y=0; y<Y_GYO; y++ ){
+				//道	
+				if( miti[x][y] ){
+					box.pos.x = x * BOX_SIZE * 2.0;	
+					box.pos.z = y * BOX_SIZE * 2.0;	
+					box.Render();
+				}
+				//横つなぎ
+				if( y < Y_GYO-1 && yokoba[x][y] == 1 ){
+					box.pos.x = x * BOX_SIZE * 2.0;
+					box.pos.z = y * BOX_SIZE * 2.0 + BOX_SIZE;
+					box.Render();
+				}
+				//縦つなぎ
+				if( x < X_RETU-1 && tateba[x][y] == 1 ){
+					box.pos.x = x * BOX_SIZE * 2.0 + BOX_SIZE;
+					box.pos.z = y * BOX_SIZE * 2.0;
+					box.Render();
+				}
 			}
 		}
-	}
+		
+	}else if( !DisplayList ){
+		//迷路完成後
+		
+		DisplayList = glGenLists(1);//ディスプレイリストを作成
+		glNewList(DisplayList, GL_COMPILE_AND_EXECUTE); //保存と実行
+		
+		//描画
+		for(int x=0; x<X_RETU; x++ ){
+			for(int y=0; y<Y_GYO; y++ ){
+				//道	
+				if( miti[x][y] ){
+					box.pos.x = x * BOX_SIZE * 2.0;	
+					box.pos.z = y * BOX_SIZE * 2.0;	
+					box.Render();
+				}
+				//横つなぎ
+				if( y < Y_GYO-1 && yokoba[x][y] == 1 ){
+					box.pos.x = x * BOX_SIZE * 2.0;
+					box.pos.z = y * BOX_SIZE * 2.0 + BOX_SIZE;
+					box.Render();
+				}
+				//縦つなぎ
+				if( x < X_RETU-1 && tateba[x][y] == 1 ){
+					box.pos.x = x * BOX_SIZE * 2.0 + BOX_SIZE;
+					box.pos.z = y * BOX_SIZE * 2.0;
+					box.Render();
+				}
+			}
+		}
+	
+		box_goal.Render();	//ゴールマス
 
-	//ゴールマス
-	if( end_f ) box_goal.Render();
+		glEndList();
+
+		printf("迷路用ディスプレイリスト作成完了！\n");
+	}else{
+		//迷路・ディスプレイリストともに完成後
+		glCallList( DisplayList );	//ディスプレイリストで描画
+	}
 	
 	glPopMatrix();
 	
 	//当たり判定
 	int x = (int)(v.x/BOX_SIZE/2.0);
 	int y = (int)(v.z/BOX_SIZE/2.0);
-	if( end_f && x == miti_x && y == miti_y ){	//ゴールマスに乗ったか判定
+	if( end_f && 
+			( x == miti_x || x == miti_x-1 ) &&
+			( y == miti_y || y == miti_y-1 ) ){	//ゴールマスに乗ったか判定
 		box_goal.NormalForce( v, _speed );
-		if( box_goal.laston & 1 ) onCLEAR = true;
+		if( box_goal.laston & 1 )
+			onCLEAR = true;
 	}
 	if( x>=0 && y>=0 && x<X_RETU && y<Y_GYO ){
 		box_colli(x, y, box, v, _speed);	//中央
