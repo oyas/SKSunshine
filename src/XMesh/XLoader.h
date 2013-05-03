@@ -22,7 +22,7 @@
 #  define GL_GLEXT_PROTOTYPES	//linuxではこれを宣言するとglewが使えるぽい
 #  include <GL/freeglut.h>
 #endif
-#include <GL/glpng.h>	//pngのローダー
+//#include <GL/glpng.h>	//pngのローダー
 
 #include <iostream>
 #include <cmath>
@@ -37,6 +37,10 @@
 #else
 	#define ZeroMemory(x,y) memset(x,0x00,y)
 #endif
+
+//その他　借り処置
+#include "../image/PNGtexture.h"
+
 
 using namespace std;
 

@@ -12,25 +12,33 @@ Stage0::Stage0()
 	//背景作成
 	//背景画像読み込み
 	float pos[4][3] = { {2.3,1.3,0.0}, {2.3,-1.3,0.0}, {-2.3,-1.3,0.0}, {-2.3,1.3,0.0} };
-	DisplayList_BACK = CreatePNGDisplayList("yama.png", &textureBACK, pos, false);
+//	DisplayList_BACK = CreatePNGDisplayList("yama.png", &textureBACK, pos, false);
+	texture_BACK.load("yama.png");
+	DisplayList_BACK = texture_BACK.CreateDisplayList(pos, false);
 	//////////////////////////////
 	
 	//////////////////////////
 	//「スペースキーでスタート」作成
 	//画像読み込み
-	DisplayList_Space = CreatePNGDisplayList("space.png", &textureSpace, NULL, true);
+//	DisplayList_Space = CreatePNGDisplayList("space.png", &textureSpace, NULL, true);
+	texture_Space.load("space.png");
+	DisplayList_Space = texture_Space.CreateDisplayList(NULL, true);
 	//////////////////////////////
 	
 	//////////////////////////
 	//タイトル画像作成
 	//画像読み込み
-	DisplayList_TITLE = CreatePNGDisplayList("title.png", &textureTITLE, NULL, true);
+//	DisplayList_TITLE = CreatePNGDisplayList("title.png", &textureTITLE, NULL, true);
+	texture_TITLE.load("title.png");
+	DisplayList_TITLE = texture_TITLE.CreateDisplayList(NULL, true);
 	//////////////////////////////
 	
 	//////////////////////////
 	//説明画像作成
 	//画像読み込み
-	DisplayList_Setumei = CreatePNGDisplayList("setumei.png", &textureSetumei, NULL, true);
+//	DisplayList_Setumei = CreatePNGDisplayList("setumei.png", &textureSetumei, NULL, true);
+	texture_Setumei.load("setumei.png");
+	DisplayList_Setumei = texture_Setumei.CreateDisplayList(NULL, true);
 	//////////////////////////////
 	
 	//点滅用タイマー

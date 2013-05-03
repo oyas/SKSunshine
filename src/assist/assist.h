@@ -5,9 +5,9 @@
 #define _ASSIST_H
 
 //インクルード
-#include "XMesh/XLoader.h"		//Xファイルロード系
-#include "Collision/colli.h"	//当たり判定系
-#include "Sound/sound.h"		//サウンド系(OpenAL)
+#include "../XMesh/XLoader.h"		//Xファイルロード系
+#include "../Collision/colli.h"	//当たり判定系
+#include "../Sound/sound.h"		//サウンド系(OpenAL)
 #include <GL/freeglut.h>
 #include <cstdio>
 #include <cstring>
@@ -155,6 +155,7 @@ public:
 };*/
 
 
+
 /*----------------------------------------------------------------------------------*
 	画像表示
 	PNG画像を読み込んで、ディスプレイリストを作る
@@ -163,7 +164,7 @@ public:
 	pos[4][3] : 表示位置の指定。(左上,左下,右下,右上)z座標は0推奨。NULLを指定するとデフォルトの位置になる。
 	BlendON   : アルファブレンド有効
  *----------------------------------------------------------------------------------*/
-GLuint CreatePNGDisplayList(const char *filename, GLuint *texture, float pos[4][3], bool BlendON);
+//GLuin CreatePNGDisplayList(const char *filename, GLuint *texture, float pos[4][3], bool BlendON);
 
 
 #endif	//_ASSIST_H

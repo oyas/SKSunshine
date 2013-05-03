@@ -3,7 +3,7 @@
 // 迷路のステージ。javascriptで書いた迷路の移植版的なやつ。
 
 
-#include "object.h"	//基本オブジェクト
+#include "../assist/object.h"	//基本オブジェクト
 #include "stage2.h"
 #include "stage0.h"	//次のステージ
 
@@ -152,21 +152,28 @@ Stage2::Stage2() : sound("whistle.wav")
 	//背景作成
 	//背景画像読み込み
 	float pos[4][3] = { {2.3,1.3,0.0}, {2.3,-1.3,0.0}, {-2.3,-1.3,0.0}, {-2.3,1.3,0.0} };
-	DisplayList_BACK = CreatePNGDisplayList("yama.png", &textureBACK, pos, false);
+//	DisplayList_BACK = CreatePNGDisplayList("yama.png", &textureBACK, pos, false);//, image[0]);
+	textureBACK = png_back.load("yama.png");
+	DisplayList_BACK = png_back.CreateDisplayList(pos, false);
 	//////////////////////////////
 	
 	//////////////////////////
 	// MISS作成
 	//画像読み込み
-	DisplayList_MISS = CreatePNGDisplayList("miss.png", &textureMISS, NULL, true);
+//	DisplayList_MISS = CreatePNGDisplayList("miss.png", &textureMISS, NULL, true);//, image[1]);
+	textureMISS = png_miss.load("miss.png");
+	DisplayList_MISS = png_miss.CreateDisplayList(NULL, true);
 	//////////////////////////////
 	
 	//////////////////////////
 	// CLEAR作成
 	//画像読み込み
-	DisplayList_CLEAR = CreatePNGDisplayList("clear.png", &textureCLEAR, NULL, true);
+//	DisplayList_CLEAR = CreatePNGDisplayList("clear.png", &textureCLEAR, NULL, true);//, image[2]);
+	textureCLEAR = png_clear.load("clear.png");
+	DisplayList_CLEAR = png_clear.CreateDisplayList(NULL, true);
 	//////////////////////////////
 	
+
 	//ゲーム関連
 	game = GAME_ZIKI;
 	game_timer = 0;

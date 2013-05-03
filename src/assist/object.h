@@ -3,7 +3,11 @@
 #define _STAGE_OBJECT_H
 
 //インクルード
-#include "../assist.h"
+#include "assist.h"
+
+
+//picoPNGへの移行用
+#define USE_GLPNG 0
 
 
 /*-----------------------------------------------------------------------------------*
@@ -53,6 +57,10 @@ private:
 	GLdouble Matrix[16];	//合計の回転行列
 	Vector3 move;	//移動量
 	bool isSet;	//Set()が呼ばれたかどうか
+#if !USE_GLPNG
+	PNGtexture pngt;	//PNGテクスチャ
+#endif
+	
 public:
 	int laston, laston_i;	//前回、面の上に乗っていたかどうか
 	Vector3 pos;	//位置

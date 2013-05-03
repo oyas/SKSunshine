@@ -20,10 +20,11 @@
 #include "XLoader_sub.cpp"
 
 
-
 //ディスプレイリストを使うかどうか
 //どせいのときは1，くねくねのときは0 推奨
 #define USE_DLIST 0	//0=使わない 1=使う
+
+#define USE_GLPNG 0	//PicoPNGへ移植用
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -634,9 +635,15 @@ bool XModel::Load_element()
 					texfilename[0]='\0'; strcat(texfilename, filedir); strcat(texfilename, tfname);
 				printf("tesfilename: %s\n",texfilename);
 					//テクスチャ読み込み
+#if USE_GLPNG
 					pngInfo info;
 					material[i].texture = pngBind(texfilename, PNG_NOMIPMAP, PNG_ALPHA, &info, GL_CLAMP, GL_NEAREST, GL_NEAREST);
-					
+#else
+					PNGtexture pngt;
+					material[i].texture = pngt.load(texfilename);
+//						loadPNGbind(texfilename);//, new std::vector<unsigned char>);
+#endif
+
 					//　トークンを取得
 					GetToken("}");
 					GetToken("}");

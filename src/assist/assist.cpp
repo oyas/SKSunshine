@@ -1,12 +1,11 @@
 //assist.cpp
 /*-----------------------------------------------------------------------------------*
- *	OpenGLテンプレート（ゲームプログラミング用）
  *	ゲームで役立つ補助機能たち。
- *	ファイル名を「subMain.cpp」→「assist.cpp」と変更した。
- *	2011/6
  *-----------------------------------------------------------------------------------*/
 
 #include "assist.h"
+
+
 
 
 //fps測定
@@ -178,22 +177,27 @@ bool GetKeyState(int *KeyBuf, int key, int *Keys, int size)
 }
 
 
-/*----------------------------------------------------------------------------------*
+/*-----------------------------------------------------------------------------------*
 	画像表示
 	PNG画像を読み込んで、ディスプレイリストを作る
- *----------------------------------------------------------------------------------*/
+ *-----------------------------------------------------------------------------------
 //filename  : 読み込むPNG画像のファイル名
 //texture   : 作成したテクスチャのIDを格納する変数
 //pos[4][3] : 表示位置の指定。(頂点４つ)z座標は0推奨。NULLを指定するとデフォルトの位置になる。
 //BlendON   : アルファブレンド有効
-GLuint CreatePNGDisplayList(const char *filename, GLuint *texture, float pos[4][3], bool BlendON)
+GLuint CreatePNGDisplayList(const char *filename, GLuint *texture, float pos[4][3], bool BlendON)//, std::vector<unsigned char> &image)
 {
 	GLuint DisplayList;
 	
 	pngInfo info;
 	//*texture = pngBind(filename, PNG_NOMIPMAP, PNG_ALPHA, &info, GL_CLAMP, GL_NEAREST, GL_NEAREST);
 	*texture = pngBind(filename, PNG_BUILDMIPMAP, PNG_ALPHA, &info, GL_CLAMP, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-	
+
+
+//PicoPNGによるPNG読み込み
+	*texture = loadPNGbind(filename);//, image);
+
+//画像表示ポリゴン作成
 	DisplayList = glGenLists(1);//ディスプレイリストを作成
 	glNewList(DisplayList, GL_COMPILE); //コンパイルのみ
 	
@@ -233,7 +237,7 @@ GLuint CreatePNGDisplayList(const char *filename, GLuint *texture, float pos[4][
 	
 	return DisplayList;	//実態はただの整数なのでそのまま渡す。
 }
-
+*/
 
 
 

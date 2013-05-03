@@ -32,8 +32,10 @@ void sankakOBJ::Set(Vector3 *vec)
 	colliOBJ.Set_3(vertex);
 	
 	//テクスチャ読み込み
+#if 0	//借り処置。あとで削除
 	pngInfo info;
 	texturePNG = pngBind("test.png", PNG_NOMIPMAP, PNG_ALPHA, &info, GL_CLAMP, GL_NEAREST, GL_NEAREST);
+#endif
 	
 	//UV
 	float uv[3][2] = { {0.0,0.0}, {1.0,0.0}, {0.0,1.0} };
@@ -222,8 +224,12 @@ void boxOBJ::Set(Vector3 *vec, const char *texName)
 	
 	//テクスチャ読み込み
 	if( texName != NULL ){
+#if USE_GLPNG
 		pngInfo info;
 		texturePNG = pngBind(texName, PNG_NOMIPMAP, PNG_ALPHA, &info, GL_CLAMP, GL_NEAREST, GL_NEAREST);
+#else
+		texturePNG = pngt.load(texName);
+#endif
 	}
 	
 	//UV

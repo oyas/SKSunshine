@@ -3,8 +3,8 @@
 #define _STAGE1_H
 
 //インクルード
-#include "../assist.h"
-#include "object.h"
+#include "../assist/assist.h"
+#include "../assist/object.h"
 
 
 
@@ -114,12 +114,15 @@ private:
 	OBJgroup4 objg4;	//4
 	OBJgroup5 objg5;	//5
 	//背景
+	PNGtexture png_back;
 	GLuint textureBACK;	//背景のテクスチャ
 	GLuint DisplayList_BACK;	//背景のディスプレイリスト
 	//MISS
+	PNGtexture png_miss;
 	GLuint textureMISS;	//テクスチャ
 	GLuint DisplayList_MISS;	//ディスプレイリスト
 	//CLEAR
+	PNGtexture png_clear;
 	GLuint textureCLEAR;	//テクスチャ
 	GLuint DisplayList_CLEAR;	//ディスプレイリスト
 	//ゲームクリアーorミス

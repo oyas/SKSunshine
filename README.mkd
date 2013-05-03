@@ -1,10 +1,9 @@
-2011/7
 
 スーパーくねくねサンシャイン。
 文化祭出展作品。  
 もとはLinuxで動く3DゲームをLinuxで作るのが目的だった。
 ので、このゲームはLinux(動作確認はUbuntu)でも動く。
-ただし、freeglut,OpenAL,glpngのインストールが必要。
+ただし、freeglut,OpenALのインストールが必要。
 
 
  ゲーム説明
@@ -45,6 +44,12 @@ Windowsの場合、「a.exe」
 	|-- README.mkd ・・・　これ。
 
 
+コンパイル環境の構築
+--------
+Ubuntu	:	$ sudo apt-get install freeglut3 freeglut3-dev g++ libalut-dev
+
+Windows	:	[このページ](http://moto-net.github.io/Programming/2012/11/12/OpenGLGame/)を参考にしてください。
+
 
 make方法
 --------
@@ -52,6 +57,12 @@ Ubuntu  :　`$ make`
 Windows :　`$ make win`
 
 
+使用ライブラリ
+--------
+- OpenGL
+- freeglut (ウィンドウの生成等)
+- OpenAL (BGMの再生)
+- LodePNG (PNG画像の読み込み)
 
 参考にしたページ
 ----------------

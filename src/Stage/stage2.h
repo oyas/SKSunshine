@@ -4,8 +4,8 @@
 #define _STAGE2_H
 
 //インクルード
-#include "../assist.h"
-#include "object.h"
+#include "../assist/assist.h"
+#include "../assist/object.h"
 #include "stage1.h"
 
 #include <stdlib.h>	//乱数を使うので
@@ -94,12 +94,15 @@ private:
 	OBJgroup1 objg1;	//オブジェクトグループ１
 	OBJgroup_Meiro objg_meiro; //迷路
 	//背景
+	PNGtexture png_back;
 	GLuint textureBACK;	//背景のテクスチャ
 	GLuint DisplayList_BACK;	//背景のディスプレイリスト
 	//MISS
+	PNGtexture png_miss;
 	GLuint textureMISS;	//テクスチャ
 	GLuint DisplayList_MISS;	//ディスプレイリスト
 	//CLEAR
+	PNGtexture png_clear;
 	GLuint textureCLEAR;	//テクスチャ
 	GLuint DisplayList_CLEAR;	//ディスプレイリスト
 	//ゲームクリアーorミス

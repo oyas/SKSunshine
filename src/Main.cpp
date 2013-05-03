@@ -4,7 +4,7 @@
  *	2011/4
  *-----------------------------------------------------------------------------------*/
 
-#include "assist.h"
+#include "assist/assist.h"
 #include "Stage/stage0.h"	//最初のステージクラス
 //定数
 #define GAMEMODE_FULLSCREEN 0	//ゲームモードを有効にする
@@ -368,6 +368,7 @@ void SpecialUp(int key, int x, int y)
 // フルスクリーン(ゲームモードじゃない)
 void FullScreen(void)
 {
+	printf("full\n");
 #if !GAMEMODE_FULLSCREEN
 	static int beforeWidth;
 	static int beforeHeight;
