@@ -38,15 +38,18 @@ Windowsの場合、「a.exe」
 		|-- Collision ・・・　あたり判定系
 		|-- Stage ・・・　ステージ。ゲームの内容とかここ。
 		|-- Sound ・・・　OpenAL関連。BGM担当。
-	|-- bin ・・・　実行ファイルが入ってる。makeすると自動でここに生成。中のdllはWindowsで動作するために必要。
+		|-- image ・・・　画像読み込み関連。
+		|-- assist ・・・　便利な関数たち
+	|-- bin ・・・　makeすると自動でここに実行ファイルが生成される。
 	|-- Makefile ・・・　そのまま
 	|-- a.out ・・・　bin/a.outを実行するシェルスクリプト。
 	|-- README.mkd ・・・　これ。
+	|-- test.sh ・・・　makeして、a.outを実行するシェルスクリプト。
 
 
 コンパイル環境の構築
 --------
-Ubuntu	:	$ sudo apt-get install freeglut3 freeglut3-dev g++ libalut-dev
+Ubuntu	:	`$ sudo apt-get install freeglut3 freeglut3-dev g++ libalut-dev`
 
 Windows	:	[このページ](http://moto-net.github.io/Programming/2012/11/12/OpenGLGame/)を参考にしてください。
 
