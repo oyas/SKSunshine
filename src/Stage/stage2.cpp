@@ -207,18 +207,21 @@ void Stage2::Disp(){
 		dosei.pos.x,dosei.pos.y,dosei.pos.z, 0.0,1.0,0.0);
 	
 	//キー処理(tキーでどせい高速化)
-	if( key_on & KEY_T && turbo ){
-		if( Add_ido > 0.1 ){
-			printf("移動高速化!!\n");
-			Add_ido = 0.0;
-			Add_jump = 0.0;
-		}else{
-			printf("移動高速化終了。\n");
-			Add_ido = +0.3;
-			Add_jump = -0.3;
-		}
+	if( key_on & KEY_T ){
+		if( turbo )
+			if( Add_ido > 0.1 ){
+				printf("移動高速化!!\n");
+				Add_ido = 0.0;
+				Add_jump = 0.0;
+			}else{
+				printf("移動高速化終了。\n");
+				Add_ido = +0.3;
+				Add_jump = -0.3;
+			}
 		turbo = false;
-	}else{ turbo = true; }
+	}else{
+		turbo = true;
+	}
 
 	//キー処理(どせいの移動)
 	if(key_on & KEY_B){	//bキー

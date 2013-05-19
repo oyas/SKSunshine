@@ -46,10 +46,11 @@ GLuint PNGtexture::load(const char *filename)//, std::vector<unsigned char> &ima
 		return 0;
 	}
 	
-	buffer.clear();
-	image.clear();
-	Image = new unsigned char[ w * h * 4 ];
-	memcpy(Image, &image[0], w * h * 4);
+//	buffer.clear();
+//	image.clear();
+//	Image = new unsigned char[ w * h * 4 ];
+//	memcpy(Image, &image[0], w * h * 4);
+	Image = &image[0];
 	
 	//テクスチャ作成
 	glGenTextures(1, &texture);
