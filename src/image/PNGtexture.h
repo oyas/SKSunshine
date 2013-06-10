@@ -27,7 +27,6 @@ public:
 	unsigned long w, h;
 	GLuint texture;
 	GLuint DisplayList;
-	unsigned char *Image;	//仮
 	
 	PNGtexture();
 	GLuint load(const char *filename);

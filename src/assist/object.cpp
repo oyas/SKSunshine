@@ -3,7 +3,64 @@
 #include "object.h"
 
 
-////////////////////////////////////
+
+/*-----------------------------------------------------------------------------------*
+	床クラス
+	床を表示&管理する
+ *-----------------------------------------------------------------------------------*/
+//コンストラクタ
+Ita::Ita(float u, float v){
+	pos.x=0.0; pos.y=0.0; pos.z=0.0;
+	size.x = 0.0;
+	size.y = 0.0;
+	SetRender(u, v);
+}
+
+//セット。ディスプレイリストを作成する
+//１２分割の白黒の板をつくる
+void Ita::SetRender(float u, float v){
+	const static GLfloat ground[][4] = {   /* 台の色　　　 */
+		{ 0.6, 0.6, 0.6, 1.0 },
+		{ 1.0, 1.0, 1.0, 1.0 }
+	};
+	
+	DisplayList = glGenLists(1);//ディスプレイリストを作成
+	glNewList(DisplayList,GL_COMPILE); //コンパイルのみ
+	
+	//マテリアルをデフォルトにもどす。
+	setDefaultMaterial();
+	
+	glBegin(GL_QUADS);
+	glNormal3d(0.0, 1.0, 0.0);
+	for (int j = -6; j < 6; ++j) {
+		for (int i = -6; i < 6; ++i) {
+			glMaterialfv(GL_FRONT, GL_DIFFUSE, ground[(i + j) & 1]);
+			glVertex3f((GLfloat)i*(u/12.0), 0.0, (GLfloat)j*(v/12.0));
+			glVertex3f((GLfloat)i*(u/12.0), 0.0, (GLfloat)(j + 1)*(v/12.0));
+			glVertex3f((GLfloat)(i + 1)*(u/12.0), 0.0, (GLfloat)(j + 1)*(v/12.0));
+			glVertex3f((GLfloat)(i + 1)*(u/12.0), 0.0, (GLfloat)j*(v/12.0));
+		}
+	}
+	glEnd();
+	glEndList();	//ディスプレイリストおわり
+	
+	size.x = u; size.y = v;
+	//頂点位置保存
+	vertex[0].x = -u/2; vertex[0].y = 0.0; vertex[0].z = -v/2;
+	vertex[1].x =  u/2; vertex[1].y = 0.0; vertex[1].z = -v/2;
+	vertex[2].x =  u/2; vertex[2].y = 0.0; vertex[2].z =  v/2;
+	vertex[3].x = -u/2; vertex[3].y = 0.0; vertex[3].z =  v/2;
+}
+
+//描画
+void Ita::Render(){
+	glPushMatrix();
+	glTranslatef(pos.x, pos.y, pos.z);	//移動
+	glCallList(DisplayList);	//描画
+	glPopMatrix();
+}
+
+
 
 /*-----------------------------------------------------------------------------------*
 	三角形オブジェクト

@@ -46,26 +46,21 @@ GLuint PNGtexture::load(const char *filename)//, std::vector<unsigned char> &ima
 		return 0;
 	}
 	
-//	buffer.clear();
-//	image.clear();
-//	Image = new unsigned char[ w * h * 4 ];
-//	memcpy(Image, &image[0], w * h * 4);
-	Image = &image[0];
+	buffer.clear();
 	
 	//テクスチャ作成
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, Image);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
 	glBindTexture(GL_TEXTURE_2D, 0);//バインドしたのをもとに戻す
 
 	//ステータス更新。テクスチャ作成完了
 	status = 1;
 	
-//printf("テクスチャ作成完了 %d %s\n", texture, filename);
-	
-	
+//	image.clear();	//削除しても動く
+
 	return texture;
 }
 
@@ -126,7 +121,6 @@ GLuint PNGtexture::CreateDisplayList( float pos[4][3], bool BlendON)
 
 PNGtexture::~PNGtexture()
 {
-//	printf("ですと%d\n", texture);
 	glDeleteLists(DisplayList, 1);
 	glDeleteTextures(1, &texture);
 }
