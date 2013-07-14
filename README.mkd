@@ -51,7 +51,7 @@ Windowsの場合、「a.exe」
 --------
 Ubuntu	:	`$ sudo apt-get install freeglut3 freeglut3-dev g++ libalut-dev`
 
-Windows	:	[このページ](http://moto-net.github.io/Programming/2012/11/12/OpenGLGame/)を参考にしてください。
+Windows	:	[このページ](http://moto-net.github.io/programming/2012/11/12/OpenGLGame/)を参考にしてください。
 
 
 make方法
