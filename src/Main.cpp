@@ -368,7 +368,7 @@ void SpecialUp(int key, int x, int y)
 // フルスクリーン(ゲームモードじゃない)
 void FullScreen(void)
 {
-	printf("full\n");
+	printf("fullscreen\n");
 #if !GAMEMODE_FULLSCREEN
 	static int beforeWidth;
 	static int beforeHeight;

@@ -173,6 +173,8 @@ Stage2::Stage2() : sound("whistle.wav")
 	DisplayList_CLEAR = png_clear.CreateDisplayList(NULL, true);
 	//////////////////////////////
 	
+	//影
+	shadow.Set("shadow.png", 0.8f);
 
 	//ゲーム関連
 	game = GAME_ZIKI;
@@ -372,16 +374,21 @@ void Stage2::Disp(){
 		if( (dosei.force.y<0 && speed.y>dosei.force.y)||(dosei.force.y>0 && speed.y<dosei.force.y) ) speed.y = dosei.force.y;
 		if( (dosei.force.z<0 && speed.z>dosei.force.z)||(dosei.force.z>0 && speed.z<dosei.force.z) ) speed.z = dosei.force.z;
 		Vector3 bspeed = speed;	//当たり判定前のspeedを保存
+
+		//影用
+		shadow.pos = dosei.pos;
+		shadow.speed.y = -10000.0; //スピードのリセット
+	
 		
 	//テクスチャマッピング有効
 	glEnable(GL_TEXTURE_2D);
 	//glEnable(GL_BLEND);
 		
 		//オブジェクトグループ１
-		objg1.Disp_Colli( dosei.pos, speed );
+		objg1.Disp_Colli( dosei.pos, speed, shadow );
 		
 		//オブジェクトグループ迷路
-		objg_meiro.Disp_Colli( dosei.pos, speed );
+		objg_meiro.Disp_Colli( dosei.pos, speed, shadow );
 		
 		//摩擦 接地していたら止まる
 		if( speed.y-bspeed.y != 0.0){
@@ -405,10 +412,16 @@ void Stage2::Disp(){
 			onface = 0;
 		}
 		dosei.pos += speed;	//適用
+
+		shadow.pos += shadow.speed;	//適用
+		shadow.pos.y += 0.001;
 		
 	
 	//どせいさん描画
-	if( !(key_on & KEY_X) ) dosei.Render();
+	if( !(key_on & KEY_X) ){
+		dosei.Render();
+		shadow.Render(); //影表示
+	}
 	
 	//テクスチャマッピング無効
 	//glDisable(GL_BLEND);  //ブレンド
@@ -531,7 +544,7 @@ OBJgroup_Meiro::OBJgroup_Meiro()
 	check();
 }
 
-void OBJgroup_Meiro::Disp_Colli(Vector3 &_pos, Vector3 &_speed)
+void OBJgroup_Meiro::Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow)
 {
 	Vector3 v = {_pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z };	
 	
@@ -623,23 +636,23 @@ void OBJgroup_Meiro::Disp_Colli(Vector3 &_pos, Vector3 &_speed)
 			onCLEAR = true;
 	}
 	if( x>=0 && y>=0 && x<X_RETU && y<Y_GYO ){
-		box_colli(x, y, box, v, _speed);	//中央
+		box_colli(x, y, box, v, _speed, shadow);	//中央
 		if( x > 0 )
-			box_colli(x-1, y, box, v, _speed);	//中央-x
+			box_colli(x-1, y, box, v, _speed, shadow);	//中央-x
 		if( x < X_RETU-1 )
-			box_colli(x+1, y, box, v, _speed);	//中央+x
+			box_colli(x+1, y, box, v, _speed, shadow);	//中央+x
 		if( y > 0 )
-			box_colli(x, y-1, box, v, _speed);	//中央-y
+			box_colli(x, y-1, box, v, _speed, shadow);	//中央-y
 		if( y < Y_GYO-1 )
-			box_colli(x, y+1, box, v, _speed);	//中央-y
+			box_colli(x, y+1, box, v, _speed, shadow);	//中央-y
 		if( x > 0 && y > 0 )
-			box_colli(x-1, y-1, box, v, _speed);	//中央-x-y
+			box_colli(x-1, y-1, box, v, _speed, shadow);	//中央-x-y
 		if( x > 0 && y < Y_GYO-1 )
-			box_colli(x-1, y+1, box, v, _speed);	//中央-x+y
+			box_colli(x-1, y+1, box, v, _speed, shadow);	//中央-x+y
 		if( x < X_RETU-1 && y > 0)
-			box_colli(x+1, y-1, box, v, _speed);	//中央+x-y
+			box_colli(x+1, y-1, box, v, _speed, shadow);	//中央+x-y
 		if( x < X_RETU-1 && y < Y_GYO-1)
-			box_colli(x+1, y+1, box, v, _speed);	//中央+x+y
+			box_colli(x+1, y+1, box, v, _speed, shadow);	//中央+x+y
 	}
 		
 }
@@ -787,23 +800,26 @@ int OBJgroup_Meiro::tuna(int x,int y)
 }
 
 //当たり判定用（１マスごと）
-void OBJgroup_Meiro::box_colli(int x, int y, boxOBJ &box, Vector3 &v, Vector3 &_speed )
+void OBJgroup_Meiro::box_colli(int x, int y, boxOBJ &box, Vector3 &v, Vector3 &_speed, ShadowOBJ &shadow )
 {	
 	//道	
 	box.pos.x = x * BOX_SIZE * 2.0;	
 	box.pos.z = y * BOX_SIZE * 2.0;	
 	box.NormalForce(v, _speed);
+	box.NormalForceShadow(v, shadow);
 	//横つなぎ
 	if( y < Y_GYO-1 && yokoba[x][y] == 1 ){
 		box.pos.x = x * BOX_SIZE * 2.0;
 		box.pos.z = y * BOX_SIZE * 2.0 + BOX_SIZE;
 		box.NormalForce(v, _speed);
+		box.NormalForceShadow(v, shadow);
 	}
 	//縦つなぎ
 	if( x < X_RETU-1 && tateba[x][y] == 1 ){
 		box.pos.x = x * BOX_SIZE * 2.0 + BOX_SIZE;
 		box.pos.z = y * BOX_SIZE * 2.0;
 		box.NormalForce(v, _speed);
+		box.NormalForceShadow(v, shadow);
 	}
 }
 

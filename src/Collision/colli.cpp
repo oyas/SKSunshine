@@ -16,7 +16,6 @@ Colli::Colli(){
 		sideNormal[i] = v;
 	}
 	normal = v;
-	MatrixIdentity(mat.m);
 }
 
 //三角形の登録
@@ -40,39 +39,6 @@ void Colli::Set_3(const Vector3 *vec)
 	normal.y = v1.z*v2.x - v1.x*v2.z;
 	normal.z = v1.x*v2.y - v1.y*v2.x;
 	NormalizeVec(&normal);	//XLorder_subより。正規化
-	
-/*	//高さ測定用行列
-	MATRIX4x4 m; MatrixIdentity(m.m);
-	m.m[3][0]=-vertex[0].x; m.m[3][1]=-vertex[0].y; m.m[3][2]=-vertex[0].z;
-	Vector3 VX, VY, VZ;
-	//X方向決定
-	/*VX.x = normal.y*( 1.0 ) - normal.z*( 0.0 );
-	VX.y = normal.z*( 0.0 ) - normal.x*( 1.0 );
-	VX.z = normal.x*( 0.0 ) - normal.y*( 0.0 );
-	VX.x = normal.y; VX.y = -normal.x; VX.z = 0.0;/
-	//Z方向決定
-	/*VZ.x = VX.y*normal.z - ( 0.0 )*normal.y;	//外積
-	VZ.y = ( 0.0 )*normal.x - VX.x*normal.z;
-	VZ.z = VX.x*normal.y - VX.y*normal.x;/
-	VZ.x = VX.y*normal.z;
-	VZ.y = -VX.x*normal.z;
-	VZ.z = VX.x*normal.y - VX.y*normal.x;
-	VZ.x=-VZ.x; VZ.z=-VZ.z; 
-	//Y方向決定
-	VY.x=VZ.x
-	//X方向決定
-	/*VX.x = normal.y*( 1.0 ) - normal.z*( 0.0 );
-	VX.y = normal.z*( 0.0 ) - normal.x*( 1.0 );
-	VX.z = normal.x*( 0.0 ) - normal.y*( 0.0 );/
-	VX.x = normal.y; VX.y = -normal.x; VX.z = 0.0;
-	//行列作成
-	mat.m[0][0]=VX.x;      mat.m[0][1]=VX.y;     mat.m[0][2]=VX.z;
-	mat.m[1][0]=-normal.x; mat.m[1][1]=normal.y;  mat.m[1][2]=-normal.z; 
-	mat.m[2][0]=-VZ.x;     mat.m[2][1]=-VZ.y;     mat.m[2][2]=VZ.z; 
-	//mat.m[3][0]=-vertex[0].x; mat.m[3][1]=-vertex[0].y; mat.m[3][2]=-vertex[0].z; 
-	Matrixkakeru(mat.m, m.m, mat.m);
-*/	
-	
 	
 	
 	//各辺の法線計算。面の中央から外を向くように
@@ -188,21 +154,6 @@ float Colli::GetHigh(Vector3 vec)
 
 
 
-//高さ特定(行列使用)
-float Colli::GetHighMatrix(Vector3 vec)
-{
-	switch(type){
-	case COLLI_TYPE_3:
-		return vec.x*mat.m[0][1] + vec.y*mat.m[1][1] + vec.z*mat.m[2][1] + mat.m[3][1];
-		break;
-	case COLLI_TYPE_XZ4:
-		return vec.y - vertex[0].y;
-		break;
-	}
-	return 0.0;
-}
-
-
 //点が登録面内かどうか	
 bool Colli::ColliPoint(Vector3 vec)
 {
@@ -229,8 +180,6 @@ bool Colli::ColliNormal(Vector3 vec)
 	float high = GetHigh(vec);
 	//登録面上に点を合わせる
 	v = vec - normal * high;
-//	v.y = vec.y - normal.y*high;
-//	v.z = vec.z - normal.z*high;
 	//点が登録面内か判定
 	return ColliPoint(v);
 }
@@ -249,7 +198,7 @@ bool Colli::ColliLine(Vector3 vec, Vector3 fvec)
 		high = GetHigh(vec); fhigh = GetHigh(vec+fvec);
 		if( (high>=0 && fhigh<=0) ){
 			//面と交わる点までの比率を求める
-			float r = high/(high-fhigh);
+			float r = (high-fhigh)?(high/(high-fhigh)):1.0;
 			//面と交わる点を求める
 			v = vec + fvec * r;
 			//その点が登録面上かどうか
@@ -261,11 +210,9 @@ bool Colli::ColliLine(Vector3 vec, Vector3 fvec)
 		high = GetHigh(vec);
 		if( (high>=0 && high+fvec.y<=0) ){
 			//面と交わる点までの比率を求める
-			float r = - high / fvec.y;
+			float r = - (fvec.y)?(high / fvec.y):1.0;
 			//面と交わる点を求める
 			v = vec + fvec * r;
-	//		v.y = vec.y + fvec.y*r;
-	//		v.z = vec.z + fvec.z*r;
 			//その点が登録面上かどうか
 			return ColliPoint(v);
 		}else{
@@ -274,6 +221,41 @@ bool Colli::ColliLine(Vector3 vec, Vector3 fvec)
 		break;
 	}
 	return false;
+}
+
+
+//衝突点を求める(GetLineの途中までやるだけ)
+Vector3 Colli::GetColliPoint(Vector3 vec, Vector3 fvec)
+{
+	Vector3 v;
+	float high, fhigh;
+
+	v = 0.0;
+	
+	switch(type){
+	case COLLI_TYPE_3:
+	case COLLI_TYPE_4:
+		//表から裏　へ突き抜けているかどうか
+		high = GetHigh(vec); fhigh = GetHigh(vec+fvec);
+		if( (high>=0 && fhigh<=0) ){
+			//面と交わる点までの比率を求める
+			float r = (high-fhigh)?(high/(high-fhigh)):1.0;
+			//面と交わる点を求める
+			v = vec + fvec * r;
+		}
+		break;
+	case COLLI_TYPE_XZ4:
+		//表から裏　へ突き抜けているかどうか
+		high = GetHigh(vec);
+		if( (high>=0 && high+fvec.y<=0) ){
+			//面と交わる点までの比率を求める
+			float r = - (fvec.y)?(high / fvec.y):1.0;
+			//面と交わる点を求める
+			v = vec + fvec * r;
+		}
+		break;
+	}
+	return v;	//衝突してなかったらv=0.0(原点)を返す。
 }
 
 
@@ -290,7 +272,7 @@ Vector3 Colli::GetNormalForce(Vector3 vec, Vector3 fvec)
 		high = GetHigh(vec); fhigh = GetHigh(vec+fvec);
 		if( (high>=0 && fhigh<=0) ){
 			//面と交わる点までの比率を求める
-			float r = high/(high-fhigh);
+			float r = (high-fhigh)?(high/(high-fhigh)):1.0;
 			//面と交わる点を求める
 			v = vec + fvec * r;
 			//その点が登録面上かどうか
@@ -305,19 +287,15 @@ Vector3 Colli::GetNormalForce(Vector3 vec, Vector3 fvec)
 		high = GetHigh(vec);
 		if( (high>=0 && high+fvec.y<=0) ){
 			//面と交わる点までの比率を求める
-			float r = - high / fvec.y;
+			float r = - (fvec.y)?(high / fvec.y):1.0;
 			//面と交わる点を求める
 			v = vec + fvec * r;
-		//	v.y = vec.y + fvec.y*r;
-		//	v.z = vec.z + fvec.z*r;
 			//その点が登録面上かどうか
 			if( ColliPoint(v) ){
 				//面を突き抜けた先の高さ(＋)
 				float fr = -fvec.y - high;
 				//垂直抗力計算
 				f = normal * ( fr + 0.01 );
-		//		f.y += normal.y * fr;
-		//		f.z += normal.z * fr;
 			}
 		}
 		break;

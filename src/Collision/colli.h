@@ -28,7 +28,6 @@ private:
 	Vector3 vertex[4];	//登録面。標準で四角形対応
 	Vector3 sideNormal[4];	//辺の法線。(01,12,23,30の順)
 	Vector3 normal;	//面の法線(正規化済み)
-	MATRIX4x4 mat;	//面をXZ平面に重なるように回転させる行列。（高さ測定用行列）
 public:
 	//当たり判定を行う図形をセット
 	void Set_3(const Vector3 *vec);		//当たり判定を行う三角形をセット(vecから3つ分使用)
@@ -36,10 +35,10 @@ public:
 	void Set_xz4(const Vector3 *vec);		//XZ平面と並行な四角形（vecから4つ分使用）
 	//当たり判定
 	float GetHigh(Vector3 vec);	//点までの距離測定
-	float GetHighMatrix(Vector3 vec);	//点までの距離測定
 	bool ColliPoint(Vector3 vec);	//点が登録面内かどうか	
 	bool ColliNormal(Vector3 vec);	//点が領域内(登録面の垂直方向に伸ばした範囲中にある)かどうか
 	bool ColliLine(Vector3 vec, Vector3 fvec);			//直線と登録面が交わるかどうか(始点vecのfvecを直線とする)
+	Vector3 GetColliPoint(Vector3 vec, Vector3 fvec);	//衝突点を求める
 	Vector3 GetNormalForce(Vector3 vec, Vector3 fvec);	//垂直抗力を返す
 	const Vector3 &GetNormal(){return normal;}		//垂直ベクトルを返す
 	//コンストラクタ・デストラクタ

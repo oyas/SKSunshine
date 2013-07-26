@@ -56,12 +56,12 @@ private:
 	int tuna(int x, int y);
 
 	//当たり判定用
-	void box_colli(int x, int y, boxOBJ &box, Vector3 &v, Vector3 &_speed );
+	void box_colli(int x, int y, boxOBJ &box, Vector3 &v, Vector3 &_speed, ShadowOBJ &shadow );
 
 public:
 	bool onCLEAR;	//ゴール判定
 	OBJgroup_Meiro();	
-	void Disp_Colli(Vector3 &_pos, Vector3 &_speed);	//描画と当たり判定
+	void Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow);	//描画と当たり判定
 };
 
 
@@ -105,6 +105,8 @@ private:
 	PNGtexture png_clear;
 	GLuint textureCLEAR;	//テクスチャ
 	GLuint DisplayList_CLEAR;	//ディスプレイリスト
+	//影用
+	ShadowOBJ shadow;
 	//ゲームクリアーorミス
 	char game;	//1〜5:残機 6:CLEAR 0:MISS
 	int game_timer;	//ゲーム終了に使うtimer 

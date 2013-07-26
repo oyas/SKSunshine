@@ -112,10 +112,7 @@ Stage1::Stage1() : sound("whistle.wav")
 #endif
 	model.Load(a, 0);
 	//Xオブジェクト作成
-	dosei.setXModel(&model);
-	dosei.pos.y = 10.0;
-	dosei.pos.z = 0.0;
-	//どせい向き
+	dosei.setXModel(&model); dosei.pos.y = 10.0; dosei.pos.z = 0.0; //どせい向き
 	dosei.angle = 180;
 	dosei.ang.y = 1.0;
 	//どせいに関するもの初期化
@@ -174,12 +171,17 @@ Stage1::Stage1() : sound("whistle.wav")
 	DisplayList_CLEAR = png_clear.CreateDisplayList(NULL, true);
 	//////////////////////////////
 	
+	//影
+	shadow.Set("shadow.png", 0.8f);
+	
 	//ゲーム関連
 	game = GAME_ZIKI;
 	game_timer = 0;
 	sprintf(str_a,"x%d",game);
 	
 	printf("stage1 初期化完了。\n");	//デバッグ用
+
+	dosei.pos.z = 210.1;
 }
 
 
@@ -341,6 +343,8 @@ void Stage1::Disp(){
 			dosei.pos.y = 10.0;
 			dosei.pos.z = (dosei.pos.z>210.0 ? 210.0 : 0.0);	//アイスブロックまでいってたらその直前から再開
 			dosei.speed = 0.0;
+			shadow.pos = 0.0;
+			shadow.speed = 0.0;
 		}
 	}
 		
@@ -352,25 +356,33 @@ void Stage1::Disp(){
 		if( (dosei.force.y<0 && speed.y>dosei.force.y)||(dosei.force.y>0 && speed.y<dosei.force.y) ) speed.y = dosei.force.y;
 		if( (dosei.force.z<0 && speed.z>dosei.force.z)||(dosei.force.z>0 && speed.z<dosei.force.z) ) speed.z = dosei.force.z;
 		Vector3 bspeed = speed;	//当たり判定前のspeedを保存
+
+		//影用
+		shadow.pos = dosei.pos;
+		shadow.speed = 0.0;
+		shadow.speed.y = -10000.0; //スピードのリセット
+//printf("%f %f %f %f %f %f\n", shadow.pos.x, shadow.pos.y , shadow.pos.z, shadow.speed.x, shadow.speed.y , shadow.speed.z);
+	
 		
 	//テクスチャマッピング有効
 	glEnable(GL_TEXTURE_2D);
 	//glEnable(GL_BLEND);
 		
 		//オブジェクトグループ１
-		objg1.Disp_Colli( dosei.pos, speed );
+		objg1.Disp_Colli( dosei.pos, speed, shadow );
 		
 		//オブジェクトグループ2
-		objg2.Disp_Colli( dosei.pos, speed );
+		objg2.Disp_Colli( dosei.pos, speed, shadow );
 		
 		//オブジェクトグループ3
-		objg3.Disp_Colli( dosei.pos, speed );
+		objg3.Disp_Colli( dosei.pos, speed, shadow );
 		
 		//オブジェクトグループ4
-		objg4.Disp_Colli( dosei.pos, speed );
+		objg4.Disp_Colli( dosei.pos, speed, shadow );
 		
 		//オブジェクトグループ5
-		objg5.Disp_Colli( dosei.pos, speed );
+		objg5.Disp_Colli( dosei.pos, speed, shadow );
+//printf("%f %f %f %f %f %f\n", shadow.pos.x, shadow.pos.y , shadow.pos.z, shadow.speed.x, shadow.speed.y , shadow.speed.z);
 		
 		//摩擦 接地していたら止まる
 		if( speed.y-bspeed.y != 0.0){
@@ -394,15 +406,22 @@ void Stage1::Disp(){
 			onface = 0;
 		}
 		dosei.pos += speed;	//適用
-		
+
+		shadow.pos += shadow.speed;	//適用
+		shadow.pos.y += 0.001;
+
 	
 	//どせいさん描画
-	if( !(key_on & KEY_X) ) dosei.Render();
+	if( !(key_on & KEY_X) ){
+		dosei.Render();
+		shadow.Render(); //影表示
+	}
 	
 	//テクスチャマッピング無効
 	//glDisable(GL_BLEND);  //ブレンド
 	glDisable(GL_TEXTURE_2D);
 	}
+	
 	
 	//FPS出力
 	fpstxt = fps();
@@ -544,7 +563,7 @@ OBJgroup1::OBJgroup1() : ita(24.0, 24.0)
 	pos.y -= 3.0;
 }
 
-void OBJgroup1::Disp_Colli(Vector3 &_pos, Vector3 &_speed)
+void OBJgroup1::Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow)
 {
 	Vector3 v = {_pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z };	
 	
@@ -578,6 +597,20 @@ void OBJgroup1::Disp_Colli(Vector3 &_pos, Vector3 &_speed)
 	box1.Render();
 	
 	glPopMatrix();
+
+	//影の更新
+	//判定柱(判定球をy軸方向へ延長したもの)の中の時に処理する
+	if( sqrt( v.x*v.x + v.z*v.z ) <= radius ){
+		box1.NormalForceShadow(v, shadow);
+		for(int i=0; i<3; i++){
+			box[i].NormalForceShadow(v, shadow);
+		}
+		if( colliIta.ColliLine(shadow.pos, shadow.speed) ){
+			shadow.pos.y -= colliIta.GetHigh(shadow.pos) - 0.0001;
+			shadow.speed = 0.0;
+		}
+	}
+
 	
 	//判定球の外の場合
 	if( sqrt( v.x*v.x + v.y*v.y + v.z*v.z ) > radius+sqrt( _speed.x*_speed.x + _speed.y*_speed.y + _speed.z*_speed.z ) ){
@@ -651,7 +684,7 @@ OBJgroup2::OBJgroup2()
 	rot = 0.0;
 }
 
-void OBJgroup2::Disp_Colli(Vector3 &_pos, Vector3 &_speed)
+void OBJgroup2::Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow)
 {
 	Vector3 v = {_pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z }, move;	
 	
@@ -685,6 +718,14 @@ void OBJgroup2::Disp_Colli(Vector3 &_pos, Vector3 &_speed)
 	
 	glPopMatrix();
 	
+	//影の更新
+	//判定柱(判定球をy軸方向へ延長したもの)の中の時に処理する
+	if( sqrt( v.x*v.x + v.z*v.z ) <= radius ){
+		for(int i=0; i<4; i++){
+			box[i].NormalForceShadow(v, shadow);
+		}
+	}
+
 	//判定球の外の場合
 	if( sqrt( v.x*v.x + v.y*v.y + v.z*v.z ) > ( radius + sqrt( _speed.x*_speed.x + _speed.y*_speed.y + _speed.z*_speed.z ) ) ){
 		return;
@@ -811,7 +852,7 @@ OBJgroup3::OBJgroup3()
 	box_action = 0;
 }
 
-void OBJgroup3::Disp_Colli(Vector3 &_pos, Vector3 &_speed)
+void OBJgroup3::Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow)
 {
 	Vector3 v = {_pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z }, move;	
 	
@@ -862,6 +903,14 @@ void OBJgroup3::Disp_Colli(Vector3 &_pos, Vector3 &_speed)
 	
 	glPopMatrix();
 	
+	//影の更新
+	//判定柱(判定球をy軸方向へ延長したもの)の中の時に処理する
+	if( sqrt( v.x*v.x + v.z*v.z ) <= radius ){
+		for(int i=0; i<16; i++){
+			box[i].NormalForceShadow(v, shadow);
+		}
+	}
+
 	//判定球の外の場合
 	if( sqrt( v.x*v.x + v.y*v.y + v.z*v.z ) > radius+sqrt( _speed.x*_speed.x + _speed.y*_speed.y + _speed.z*_speed.z ) ){
 		return;
@@ -943,12 +992,20 @@ OBJgroup4::OBJgroup4()
 	mat_z.m[0][1] = -rsin; mat_z.m[1][1] = rcos;
 }
 
-void OBJgroup4::Disp_Colli(Vector3 &_pos, Vector3 &_speed)
+void OBJgroup4::Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow)
 {
 	Vector3 v = {_pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z };	
 	bool on=true;
 	int a=0;
 	
+	//影の更新
+	//判定柱(判定球をy軸方向へ延長したもの)の中の時に処理する
+	if( sqrt( v.x*v.x + v.z*v.z ) <= radius ){
+		for(int i=0; i<12*6; i++){
+			box[i].NormalForceShadow(v, shadow);
+		}
+	}
+
 	//判定球の外の場合
 	if( sqrt( v.x*v.x + v.y*v.y + v.z*v.z ) > radius+sqrt( _speed.x*_speed.x + _speed.y*_speed.y + _speed.z*_speed.z ) ){
 		on = false;
@@ -1081,7 +1138,7 @@ OBJgroup5::OBJgroup5()
 	onCLEAR = false;
 }
 
-void OBJgroup5::Disp_Colli(Vector3 &_pos, Vector3 &_speed)
+void OBJgroup5::Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow)
 {
 	Vector3 v = {_pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z };	
 	
@@ -1095,6 +1152,14 @@ void OBJgroup5::Disp_Colli(Vector3 &_pos, Vector3 &_speed)
 	
 	glPopMatrix();
 	
+	//影の更新
+	//判定柱(判定球をy軸方向へ延長したもの)の中の時に処理する
+	if( sqrt( v.x*v.x + v.z*v.z ) <= radius ){
+		for(int i=0; i<2; i++){
+			box[i].NormalForceShadow(v, shadow);
+		}
+	}
+
 	//判定球の外の場合
 	if( sqrt( v.x*v.x + v.y*v.y + v.z*v.z ) > radius+sqrt( _speed.x*_speed.x + _speed.y*_speed.y + _speed.z*_speed.z ) ){
 		return;

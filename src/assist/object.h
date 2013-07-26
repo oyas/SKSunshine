@@ -60,6 +60,28 @@ public:
 
 
 /*-----------------------------------------------------------------------------------*
+	影オブジェクト
+	当たり判定なしスプライト
+ *-----------------------------------------------------------------------------------*/
+class ShadowOBJ{
+private:
+	GLuint DisplayList;	//ディスプレイリスト
+	PNGtexture png;
+	void SetRender(float scale);	//ディスプレイリスト作成
+	
+public:
+	Vector3 pos;	//位置
+	Vector3 speed;	//速度(当たり判定で使用)
+	void Set(const char *texName = NULL, float scale=1.0f);	//登録
+	void Render();	//描画
+	ShadowOBJ(const char *texName = NULL, float scale=-1.0f);	//コンストラクタ
+	~ShadowOBJ();
+};
+
+
+
+
+/*-----------------------------------------------------------------------------------*
 	直方体オブジェクト
 	当たり判定を含む
  *-----------------------------------------------------------------------------------*/
@@ -90,11 +112,14 @@ public:
 	void addpos(Vector3 &vec);	//移動させる
 	void NormalForce(Vector3 &_pos, Vector3 &_speed);		//垂直抗力の取得と適用
 	void NormalForceIce(Vector3 &_pos, Vector3 &_speed);		//垂直抗力の取得と適用(氷のとこ用)
+	void NormalForceShadow( Vector3 _pos, ShadowOBJ &shadow );	//影の表示位置の決定と適用
 	void Render();	//描画
 	float radius(){return r;}	//判定球の半径を返す
 	boxOBJ();	//コンストラクタ
 	~boxOBJ();
 };
+
+
 
 
 

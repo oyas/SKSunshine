@@ -22,7 +22,7 @@ private:
 	float radius;	//判定球の半径
 	Vector3 pos;	//位置
 public:
-	void Disp_Colli(Vector3 &_pos, Vector3 &_speed);	//描画と当たり判定
+	void Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow);	//描画と当たり判定
 	OBJgroup1();
 };
 
@@ -35,7 +35,7 @@ private:
 	Vector3 pos;	//位置
 	float rot;	//回転角(各boxの位置)
 public:
-	void Disp_Colli(Vector3 &_pos, Vector3 &_speed);	//描画と当たり判定
+	void Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow);	//描画と当たり判定
 	OBJgroup2();
 };
 
@@ -49,7 +49,7 @@ private:
 	int box_action;	//boxの動作 1:奥へ移動 2:回転 3:前へ移動 4:回転
 	float rot;	//回転角(各boxの位置)
 public:
-	void Disp_Colli(Vector3 &_pos, Vector3 &_speed);	//描画と当たり判定
+	void Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow);	//描画と当たり判定
 	OBJgroup3();
 };
 
@@ -64,7 +64,7 @@ private:
 	int rot;	//回転角(各boxの位置)
 	MATRIX4x4 matx, matz, mat_z;	//回転行列
 public:
-	void Disp_Colli(Vector3 &_pos, Vector3 &_speed);	//描画と当たり判定
+	void Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow);	//描画と当たり判定
 	OBJgroup4();
 };
 
@@ -76,7 +76,7 @@ private:
 	Vector3 pos;	//位置
 public:
 	bool onCLEAR;	//box[0]の上に乗っているかどうか
-	void Disp_Colli(Vector3 &_pos, Vector3 &_speed);	//描画と当たり判定
+	void Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow);	//描画と当たり判定
 	OBJgroup5();
 };
 
@@ -125,6 +125,8 @@ private:
 	PNGtexture png_clear;
 	GLuint textureCLEAR;	//テクスチャ
 	GLuint DisplayList_CLEAR;	//ディスプレイリスト
+	//影用
+	ShadowOBJ shadow;
 	//ゲームクリアーorミス
 	char game;	//1〜5:残機 6:CLEAR 0:MISS
 	int game_timer;	//ゲーム終了に使うtimer 
