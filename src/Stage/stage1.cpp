@@ -15,7 +15,7 @@
 #define DOSEI_CAMRA 0.05	//カメラ操作時の移動量
 
 #define DOSEI_JAMP_BACKJAMP 1	//バックジャンプの有無
-#define DOSEI_JAMP_DOUBLE 1	//空中ジャンプの有無
+#define DOSEI_JAMP_DOUBLE 0	//空中ジャンプの有無
 #define DOSEI_JAMP_3STEP 0	//３段ジャンプの有無 (有効にすると別ゲーになります)
 #define DOSEI_JAMP_MUGEN 0	//無限ジャンプの有無(チート)
 
@@ -181,7 +181,6 @@ Stage1::Stage1() : sound("whistle.wav")
 	
 	printf("stage1 初期化完了。\n");	//デバッグ用
 
-	dosei.pos.z = 210.1;
 }
 
 
@@ -343,8 +342,6 @@ void Stage1::Disp(){
 			dosei.pos.y = 10.0;
 			dosei.pos.z = (dosei.pos.z>210.0 ? 210.0 : 0.0);	//アイスブロックまでいってたらその直前から再開
 			dosei.speed = 0.0;
-			shadow.pos = 0.0;
-			shadow.speed = 0.0;
 		}
 	}
 		
@@ -361,8 +358,6 @@ void Stage1::Disp(){
 		shadow.pos = dosei.pos;
 		shadow.speed = 0.0;
 		shadow.speed.y = -10000.0; //スピードのリセット
-//printf("%f %f %f %f %f %f\n", shadow.pos.x, shadow.pos.y , shadow.pos.z, shadow.speed.x, shadow.speed.y , shadow.speed.z);
-	
 		
 	//テクスチャマッピング有効
 	glEnable(GL_TEXTURE_2D);
@@ -382,7 +377,6 @@ void Stage1::Disp(){
 		
 		//オブジェクトグループ5
 		objg5.Disp_Colli( dosei.pos, speed, shadow );
-//printf("%f %f %f %f %f %f\n", shadow.pos.x, shadow.pos.y , shadow.pos.z, shadow.speed.x, shadow.speed.y , shadow.speed.z);
 		
 		//摩擦 接地していたら止まる
 		if( speed.y-bspeed.y != 0.0){

@@ -377,6 +377,7 @@ void Stage2::Disp(){
 
 		//影用
 		shadow.pos = dosei.pos;
+		shadow.speed = 0.0;
 		shadow.speed.y = -10000.0; //スピードのリセット
 	
 		
