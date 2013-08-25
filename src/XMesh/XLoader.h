@@ -32,11 +32,12 @@
 #include <cstdio>
 #include <fstream>
 //windows or other
-#ifdef WIN32
-	#include <windows.h>
-#else
+//#ifdef WIN32
+//	#define ZeroMemory(x,y) SecureZeroMemory(x,y)
+//	#include <windows.h>
+//#else
 	#define ZeroMemory(x,y) memset(x,0x00,y)
-#endif
+//#endif
 
 //その他　借り処置
 #include "../image/PNGtexture.h"

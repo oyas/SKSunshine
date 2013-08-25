@@ -1,10 +1,9 @@
 LIBS          = -lglut -lGLU -lGL -lalut -lopenal
-#LIBS          = -lglut -lGLU -lGL -lglpng -lalut
 OBJS          = src/Main.o src/assist/assist.o src/Stage/stage1.o src/XMesh/XLoader.o \
 				src/Collision/colli.o src/Sound/sound.o src/Stage/stage0.o \
 				src/assist/object.o src/Stage/stage2.o src/image/PNGtexture.o
 PROGRAM       = bin/a.out
-LIBS_WIN      = -lglpng -lopengl32 -lfreeglut -lglu32 -lglew32 -lOpenAL32 -lalut
+LIBS_WIN      = -lopengl32 -lfreeglut -lglu32 -lglew32 -lOpenAL32 -lalut
 PROGRAM_WIN   = bin/a.exe
 WINR          =
 
@@ -32,8 +31,8 @@ clean:;	rm -f $(OBJS) $(PROGRAM)
 # サフィックスルール (.cpp → .o)
 .cpp.o:
 #	$(CXX) -W -Wall -c $<
-	$(CXX) -g -O0 -c $< -o $@
-#	$(CXX) -O3 -c $< -o $@
+#	$(CXX) -g -O0 -c $< -o $@
+	$(CXX) -W -Wall -O3 -c $< -o $@
 
 #以下追加の依存関係
 src/Main.o: src/assist/assist.h src/XMesh/XLoader.h
