@@ -36,11 +36,14 @@
 //	#define ZeroMemory(x,y) SecureZeroMemory(x,y)
 //	#include <windows.h>
 //#else
-	#define ZeroMemory(x,y) memset(x,0x00,y)
+//	#define ZeroMemory(x,y) memset(x,0x00,y)
 //#endif
 
 //その他　借り処置
 #include "../image/PNGtexture.h"
+
+//ベクトル、行列関連
+#include "../assist/vector_math.h"
 
 
 using namespace std;
@@ -64,48 +67,8 @@ class XMaterial;
 class XModel;
 class XAnimation;
 class XAnimationKey;
-struct Vector2;
-struct Vector3;
-struct MATRIX4x4;
-
-//colli.cppでも使うため、プロトタイプ宣言
-void NormalizeVec(Vector3 *v);	//ベクトル正規化
-Vector3 NormalizeVector(Vector3 v);	//返り値がベクトル
-void MatrixIdentity(float f[4][4]);	//行列の初期化
-void Matrixkakeru(float o[4][4], float a[4][4], float b[4][4]); //行列の掛け算
-void Matrixkakeru(float o[4], float a[4], float b[4][4]);	//ベクトルの掛け算
-void Matrixkakeru(GLdouble o[16], GLdouble a[16], float b[4][4]); //行列の掛け算(XLoaderでは使わない)
 
 
-//
-// Vector2 struct
-//
-struct Vector2
-{
-	float x, y; 
-	operator float* () { return (float*)&x; }
-	operator const float*() const { return (const float*)&x; }
-};
-
-//
-// Vector3 struct
-//
-struct Vector3
-{ 
-	float x, y, z; 
-	operator float*() { return (float*)&x; }
-	operator const float*() const { return (const float*)&x; }
-	Vector3 &operator +=(const Vector3 &in){ this->x += in.x; this->y += in.y; this->z += in.z; return *this; }
-	Vector3 &operator -=(const Vector3 &in){ this->x -= in.x; this->y -= in.y; this->z -= in.z; return *this; }
-	Vector3 operator + (const Vector3 &in){ Vector3 v = *this; v += in; return v; }
-	Vector3 operator - (const Vector3 &in){ Vector3 v = *this; v -= in; return v; }
-	Vector3 &operator = (const float &in){ x=in; y=in; z=in; return *this; }
-	Vector3 operator * (const float &in){
-		Vector3 out;
-		out.x = this->x*in; out.y = this->y*in; out.z = this->z*in;
-		return out;
-	}
-};
 
 //
 // XColor struct
@@ -115,19 +78,6 @@ struct XColor
 	float r, g, b, a; 
 	operator float*() { return (float*)&r; }
 	operator const float*() const { return (const float*)&r; }
-};
-
-//
-// MATRIX4x4 struct
-//
-struct MATRIX4x4{
-	float m[4][4];
-	MATRIX4x4 &operator = (const MATRIX4x4 &in){
-		for(int g=0; g<4; g++)
-			for(int r=0; r<4; r++)
-				this->m[g][r] = in.m[g][r];
-		return *this;
-	}
 };
 
 

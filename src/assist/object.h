@@ -96,7 +96,8 @@ private:
 	GLuint texturePNG;
 	float r;	//判定球の半径
 	MATRIX4x4 mat;	//前回の回転行列
-	GLdouble Matrix[16];	//合計の回転行列
+	//GLdouble Matrix[16];	//合計の回転行列
+	float Matrix[16];	//合計の回転行列
 	Vector3 move;	//移動量
 	bool isSet;	//Set()が呼ばれたかどうか
 #if !USE_GLPNG

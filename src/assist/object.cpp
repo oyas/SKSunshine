@@ -355,7 +355,7 @@ void boxOBJ::addrot(MATRIX4x4 &m)
 	laston |= 2;
 	//行列保存
 	mat = m;
-	Matrixkakeru(Matrix, Matrix, m.m);
+	Matrixkakeru16(Matrix, Matrix, m.m);
 }
 
 //追加移動させる
@@ -425,7 +425,7 @@ void boxOBJ::Render()
 {
 	glPushMatrix();
 	glTranslatef(pos.x, pos.y, pos.z);	//移動
-	glMultMatrixd(Matrix);	//回転行列乗算
+	glMultMatrixf(Matrix);	//回転行列乗算
 	
 	glCallList(DisplayList);
 	

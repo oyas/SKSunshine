@@ -1,7 +1,8 @@
 LIBS          = -lglut -lGLU -lGL -lalut -lopenal
 OBJS          = src/Main.o src/assist/assist.o src/Stage/stage1.o src/XMesh/XLoader.o \
 				src/Collision/colli.o src/Sound/sound.o src/Stage/stage0.o \
-				src/assist/object.o src/Stage/stage2.o src/image/PNGtexture.o
+				src/assist/object.o src/Stage/stage2.o src/image/PNGtexture.o \
+				src/assist/vector_math.o
 PROGRAM       = bin/a.out
 LIBS_WIN      = -lopengl32 -lfreeglut -lglu32 -lglew32 -lOpenAL32 -lalut
 PROGRAM_WIN   = bin/a.exe
