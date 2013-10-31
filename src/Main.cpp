@@ -16,8 +16,10 @@
 int WindowWidth = 400;	//ウィンドウ幅
 int WindowHeight = 400;	//ウィンドウ高さ
 const char WindowTitle[] = "kunekune";	//ウィンドウタイトル
+
 StageClass *Stage, *NextStage;	//ステージクラスのポインタ
 bool FullScreenMode = false;	//フルスクリーンモードかどうか
+PublicClass PublicData;	//共用クラス
 
 //関数のプロトタイプ宣言
 void Init();
@@ -117,6 +119,8 @@ void Init(void)
 	
 	//最初のステージクラスをnewする
 	Stage = new FIRST_STAGECLASS;
+	//共用クラスへのポインタを渡す
+	Stage->PublicData = &PublicData;
 	//次のステージクラスはNULLにしとく
 	NextStage = NULL;
 	
@@ -266,6 +270,7 @@ void PassiveMotion(int x, int y)
 void Keyboard(unsigned char key, int x, int y)
 {
 	Stage->Input(SC_INPUT_KEY_DOWN, (int)key, x, y);
+	PublicData.Key.SetKeyState(key, true);
 	
 	switch ( key ){
 	case '\033':	//Esc
@@ -279,12 +284,14 @@ void Keyboard(unsigned char key, int x, int y)
 void KeyboardUp(unsigned char key, int x, int y)
 {
 	Stage->Input(SC_INPUT_KEY_UP, (int)key, x, y);
+	PublicData.Key.SetKeyState(key, false);
 }
 
 // 特殊キー処理
 void Special(int key, int x, int y)
 {
 	Stage->Input(SC_INPUT_SPECIALKEY_DOWN, key, x, y);
+	PublicData.Key.SetSpecialKeyState(key, true);
 	
 	switch ( key )
 	{
@@ -358,6 +365,7 @@ void Special(int key, int x, int y)
 void SpecialUp(int key, int x, int y)
 {
 	Stage->Input(SC_INPUT_SPECIALKEY_UP, key, x, y);
+	PublicData.Key.SetSpecialKeyState(key, false);
 }
 
 
@@ -391,6 +399,7 @@ void FullScreen(void)
 void ChangeStage(StageClass* s)
 {
 	NextStage = s;
+	s->PublicData = &PublicData;
 }
 //次のステージへ変更処理
 void toNextStage(){

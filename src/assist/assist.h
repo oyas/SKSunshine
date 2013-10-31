@@ -25,6 +25,25 @@
 #define SC_INPUT_SPECIALKEY_DOWN 'g'
 #define SC_INPUT_SPECIALKEY_UP 'h'
 
+//宣言
+class PublicClass;
+
+
+//使用する特殊キーの定義
+enum ENUM_S_KEY{
+	KEY_SK_STARTNUMBER = 128,	//開始番号は128
+	KEY_SK_LEFT,
+	KEY_SK_RIGHT,
+	KEY_SK_UP,
+	KEY_SK_DOWN
+};
+static const int Keys_SK[] = {
+	0,	//KEY_SK_STARTNUMBER分のダミー
+	GLUT_KEY_LEFT,	//129
+	GLUT_KEY_RIGHT,	
+	GLUT_KEY_UP,	
+	GLUT_KEY_DOWN	
+};
 
 
 /*-----------------------------------------------------------------------------------*
@@ -72,6 +91,9 @@ public:
 	
 	//デストラクタ
 	virtual ~StageClass(){}
+
+	//共用クラスへのポインタ
+	PublicClass *PublicData;
 };
 
 
@@ -120,6 +142,19 @@ bool SetKeyState(int *KeyBuf, int key, bool onoff, int *Keys, int size);
 bool GetKeyState(int *KeyBuf, int key, int *Keys, int size);	//自前でKeyBufのビットを調べることをおすすめする。
 
 
+class KeyInput{
+public:
+	bool state[256];	//キーの入力状態 0:離れている 1:押されている
+						//0〜127: ASCII文字コードに対応したキーの状態
+						//128〜255: その他の特殊キー(定義は上)
+	KeyInput(){
+		for(int i=0; i<256; i++)
+			state[i] = false;
+	}
+	bool SetKeyState(unsigned char key, bool onoff);
+	bool SetSpecialKeyState(int key, bool onoff);
+};
+
 
 /*----------------------------------------------------------------------------------*
 	画像表示
@@ -130,6 +165,16 @@ bool GetKeyState(int *KeyBuf, int key, int *Keys, int size);	//自前でKeyBuf�
 	BlendON   : アルファブレンド有効
  *----------------------------------------------------------------------------------*/
 //GLuin CreatePNGDisplayList(const char *filename, GLuint *texture, float pos[4][3], bool BlendON);
+
+
+/*-----------------------------------------------------------------------------------*
+	PublicClass
+	ステージが変わっても保持されるデータやリソースの管理
+ *-----------------------------------------------------------------------------------*/
+class PublicClass{
+public:
+	KeyInput Key;
+};
 
 
 #endif	//_ASSIST_H

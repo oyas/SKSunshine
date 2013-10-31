@@ -49,47 +49,11 @@
 
 //////////////////////
 //チェックするキー
-static int Keys[] = {	//チェックするボタン
-		'a',	//1
-#define KEY_A 1
-		's',	//2
-#define KEY_S 2
-		'w',	//4
-#define KEY_W 4
-		'z',	//8
-#define KEY_Z 8
-		'b',	//16
-#define KEY_B 16
-		'n',	//32
-#define KEY_N 32
-		' ',	//64
-#define KEY_SPACE 64
-		'x',	//128
-#define KEY_X 128
-		'4',	//256 left
-#define KEY_LEFT 256
-		'6',	//512 right
-#define KEY_RIGHT 512
-		'8',	//1024 up
-#define KEY_UP 1024
-		'5',	//2048 down
-#define KEY_DOWN 2048
-		'q',	//4096
-#define KEY_Q 4096
-		'e'		//8192
-#define KEY_E 8192
-};
-static int Keys_sk[] = {
-		GLUT_KEY_LEFT,	//1
-#define KEY_SK_LEFT 1
-		GLUT_KEY_RIGHT,	//2
-#define KEY_SK_RIGHT 2
-		GLUT_KEY_UP,	//4
-#define KEY_SK_UP 4
-		GLUT_KEY_DOWN	//8
-#define KEY_SK_DOWN 8
-};
-
+//テンキー用
+#define KEY_LEFT '4'
+#define KEY_RIGHT '6'
+#define KEY_UP '8'	
+#define KEY_DOWN '5'
 
 
 /*-----------------------------------------------------------------------------------*
@@ -127,7 +91,7 @@ Stage1::Stage1() : sound("whistle.wav")
 	//カメラ角度
 	cam_z=20.0; cam_r=M_PI; cam_rx=M_PI_4/2;
 	//キー
-	key_on=0; yaziru=0;
+	//keystate = &PublicData->Key.state[0];
 		
 	//スコア初期化
 	//total=0;
@@ -150,7 +114,6 @@ Stage1::Stage1() : sound("whistle.wav")
 	//背景作成
 	//背景画像読み込み
 	float pos[4][3] = { {2.3,1.3,0.0}, {2.3,-1.3,0.0}, {-2.3,-1.3,0.0}, {-2.3,1.3,0.0} };
-//	DisplayList_BACK = CreatePNGDisplayList("yama.png", &textureBACK, pos, false);//, image[0]);
 	textureBACK = png_back.load("yama.png");
 	DisplayList_BACK = png_back.CreateDisplayList(pos, false);
 	//////////////////////////////
@@ -158,7 +121,6 @@ Stage1::Stage1() : sound("whistle.wav")
 	//////////////////////////
 	// MISS作成
 	//画像読み込み
-//	DisplayList_MISS = CreatePNGDisplayList("miss.png", &textureMISS, NULL, true);//, image[1]);
 	textureMISS = png_miss.load("miss.png");
 	DisplayList_MISS = png_miss.CreateDisplayList(NULL, true);
 	//////////////////////////////
@@ -166,7 +128,6 @@ Stage1::Stage1() : sound("whistle.wav")
 	//////////////////////////
 	// CLEAR作成
 	//画像読み込み
-//	DisplayList_CLEAR = CreatePNGDisplayList("clear.png", &textureCLEAR, NULL, true);//, image[2]);
 	textureCLEAR = png_clear.load("clear.png");
 	DisplayList_CLEAR = png_clear.CreateDisplayList(NULL, true);
 	//////////////////////////////
@@ -186,6 +147,7 @@ Stage1::Stage1() : sound("whistle.wav")
 
 //画面再描画時によばれる(1フレーム毎に呼ばれる)
 void Stage1::Disp(){
+	keystate = &PublicData->Key.state[0];
 	
 	//背景描画
 	glCallList(DisplayList_BACK);
@@ -205,7 +167,7 @@ void Stage1::Disp(){
 		dosei.pos.x,dosei.pos.y,dosei.pos.z, 0.0,1.0,0.0);
 	
 	//キー処理(どせいの移動)
-	if(key_on & KEY_B){	//bキー
+	if( keystate['b'] ){	//bキー
 		dosei.angle += 1.0;
 		//どせいさんの向いてる方向計算
 		dash_vec.x = -sin(dosei.angle/180 * M_PI);
@@ -213,14 +175,14 @@ void Stage1::Disp(){
 		dash_svec.x = dash_vec.z;
 		dash_svec.z = -dash_vec.x;
 	}
-	if(key_on & KEY_N){	//nキー
+	if( keystate['n'] ){	//nキー
 		dosei.angle -= 1.0;
 		dash_vec.x = -sin(dosei.angle/180 * M_PI);
 		dash_vec.z = -cos(dosei.angle/180 * M_PI);
 		dash_svec.x = dash_vec.z;
 		dash_svec.z = -dash_vec.x;
 	}
-	if(key_on & KEY_SPACE){	//space
+	if( keystate[' '] ){	//space
 		if( onface > 0 && spacekey < 1 ){	//床に接地していて、スペースキーが押された瞬間
 #if DOSEI_JAMP_BACKJAMP
 			if( (backjamp & JAMP_B_SUCCEED) && (backjamp &= ~JAMP_B_SUCCEED, backjamp & JAMP_B_TIMER) ){
@@ -266,13 +228,13 @@ void Stage1::Disp(){
 
 	//どせい移動
 	dosei.force = 0.0;
-	if( yaziru & KEY_SK_LEFT || key_on & KEY_LEFT ){	//left
+	if( keystate[ KEY_SK_LEFT ] || keystate[ KEY_LEFT ] ){	//left
 		dosei.force += dash_svec * DOSEI_IDORYOU;
 	}
-	if(yaziru & KEY_SK_RIGHT || key_on & KEY_RIGHT ){	//right
+	if( keystate[ KEY_SK_RIGHT ] || keystate[ KEY_RIGHT ] ){	//right
 		dosei.force -= dash_svec * DOSEI_IDORYOU;
 	}
-	if(yaziru & KEY_SK_UP || key_on & KEY_UP){	//up
+	if( keystate[ KEY_SK_UP ] || keystate[ KEY_UP ] ){	//up
 		dosei.force += dash_vec * DOSEI_IDORYOU;
 #if DOSEI_JAMP_BACKJAMP		
 		if( (backjamp & JAMP_B_BACK) && ( backjamp &= ~JAMP_B_BACK, backjamp & JAMP_B_TIMER ) ){	//下キーが押されていたかのフラグが立っていて、タイマーが正の場合バックジャンプ成功
@@ -283,7 +245,7 @@ void Stage1::Disp(){
 		}
 #endif		
 	}
-	if(yaziru & KEY_SK_DOWN || key_on & KEY_DOWN ){	//down
+	if( keystate[ KEY_SK_DOWN ] || keystate[ KEY_DOWN ] ){	//down
 		dosei.force -= dash_vec * DOSEI_IDORYOU;
 #if DOSEI_JAMP_BACKJAMP		
 		if( (backjamp & JAMP_B_FORWORD) && (backjamp &= ~JAMP_B_FORWORD, backjamp & JAMP_B_TIMER) ){	//上キーが押されていたかのフラグが立っていて、タイマーが正の場合バックジャンプ成功
@@ -296,7 +258,7 @@ void Stage1::Disp(){
 	}
 		
 	//カメラ移動
-	if( key_on & KEY_A ){
+	if( keystate['a'] ){
 		cam_r += DOSEI_CAMRA;
 		if(cam_r>2*M_PI) cam_r -= 2*M_PI;
 		//どせいも回転
@@ -306,7 +268,7 @@ void Stage1::Disp(){
 		dash_svec.x = dash_vec.z;
 		dash_svec.z = -dash_vec.x;
 	}
-	if( key_on & KEY_S ){
+	if( keystate['s'] ){
 		cam_r -= DOSEI_CAMRA;
 		if(cam_r<-2*M_PI) cam_r += 2*M_PI;
 		//どせいも回転
@@ -316,16 +278,16 @@ void Stage1::Disp(){
 		dash_svec.x = dash_vec.z;
 		dash_svec.z = -dash_vec.x;
 	}
-	if(key_on & KEY_Q && cam_z>5.0){
+	if( keystate['q'] && cam_z>5.0){
 		cam_z -= DOSEI_CAMRA;
 	}
-	if(key_on & KEY_E && cam_z<30.0){
+	if( keystate['e'] && cam_z<30.0){
 		cam_z += DOSEI_CAMRA;
 	}
-	if(key_on & KEY_W && cam_rx > -(M_PI_2-DOSEI_CAMRA-0.01)){
+	if( keystate['w'] && cam_rx > -(M_PI_2-DOSEI_CAMRA-0.01)){
 		cam_rx -= DOSEI_CAMRA;
 	}
-	if(key_on & KEY_Z && cam_rx < M_PI_2-DOSEI_CAMRA-0.01){
+	if( keystate['z'] && cam_rx < M_PI_2-DOSEI_CAMRA-0.01){
 		cam_rx += DOSEI_CAMRA;
 	}
 	
@@ -390,7 +352,7 @@ void Stage1::Disp(){
 						dosei.pos.y = -45.0;
 						dosei.pos.z = 0.0;
 						game++;
-						if( key_on & KEY_X ) game++;
+						if( keystate['x'] ) game++;
 					}
 					backjamp &= ~JAMP_3_SUCCEED;	
 				}
@@ -406,7 +368,7 @@ void Stage1::Disp(){
 
 	
 	//どせいさん描画
-	if( !(key_on & KEY_X) ){
+	if( !keystate['x'] ){
 		dosei.Render();
 		shadow.Render(); //影表示
 	}
@@ -467,15 +429,15 @@ void Stage1::Disp2D(int Width, int Height){
 //入力処理
 void Stage1::Input(char event, int key, int x, int y){
 	//ボタン状態チェック
-	if( event==SC_INPUT_KEY_DOWN ){
-		SetKeyState(&key_on, key, true, Keys, sizeof(Keys) );
-	}else if( event==SC_INPUT_KEY_UP ){
-		SetKeyState(&key_on, key, false, Keys, sizeof(Keys) );
-	}else if( event==SC_INPUT_SPECIALKEY_DOWN ){
-		SetKeyState(&yaziru, key, true, Keys_sk, sizeof(Keys_sk) );
-	}else if( event==SC_INPUT_SPECIALKEY_UP ){
-		SetKeyState(&yaziru, key, false, Keys_sk, sizeof(Keys_sk) );
-	}
+//	if( event==SC_INPUT_KEY_DOWN ){
+//		SetKeyState(&key_on, key, true, Keys, sizeof(Keys) );
+//	}else if( event==SC_INPUT_KEY_UP ){
+//		SetKeyState(&key_on, key, false, Keys, sizeof(Keys) );
+//	}else if( event==SC_INPUT_SPECIALKEY_DOWN ){
+//		SetKeyState(&yaziru, key, true, Keys_sk, sizeof(Keys_sk) );
+//	}else if( event==SC_INPUT_SPECIALKEY_UP ){
+//		SetKeyState(&yaziru, key, false, Keys_sk, sizeof(Keys_sk) );
+//	}
 }
 
 //デストラクタ（終了処理）

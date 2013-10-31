@@ -77,6 +77,7 @@ void DRAW_STRING(int x, int y, char *string, void *font)
 	キー入力補助
 	KeyBufのKeysと対応するビットを変更する。
  *-----------------------------------------------------------------------------------*/
+
 //KeyBufの状態を変更する。
 bool SetKeyState(int *KeyBuf, int key, bool onoff, int *Keys, int size)
 {
@@ -117,6 +118,29 @@ bool GetKeyState(int *KeyBuf, int key, int *Keys, int size)
 	}
 	
 	return true;
+}
+
+//キー入力管理クラス
+//キー状態更新
+bool KeyInput::SetKeyState(unsigned char key, bool onoff){
+	if( key > 127 )
+		return false;
+
+	state[key] = onoff;
+
+	return true;
+}
+
+//特殊キー状態更新
+bool KeyInput::SetSpecialKeyState(int key, bool onoff){
+	for( int i=1; i<sizeof(Keys_SK)/sizeof(Keys_SK[0]); i++){
+		if( key == Keys_SK[i] ){
+			state[ i + KEY_SK_STARTNUMBER ] = onoff;
+			return true;
+		}
+	}
+
+	return false;
 }
 
 
