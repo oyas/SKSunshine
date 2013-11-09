@@ -430,12 +430,13 @@ void Stage2::Disp(){
 	}
 	
 	//FPS出力
-	fpstxt = fps();
+	fps(true);
+/*	fpstxt = fps();
 	if(strcmp(fpstxt, fpstxtb)){
 		strcpy(fpstxtb, fpstxt);
 		printf("%s\n",fpstxt);
 	}
-
+*/
 	//サウンド
 	sound.stream();
 	

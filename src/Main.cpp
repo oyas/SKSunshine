@@ -1,7 +1,6 @@
 // main.cpp
 /*-----------------------------------------------------------------------------------*
  *	OpenGLテンプレート（ゲームプログラミング用）
- *	2011/4
  *-----------------------------------------------------------------------------------*/
 
 #include "assist/assist.h"
@@ -17,9 +16,9 @@ int WindowWidth = 400;	//ウィンドウ幅
 int WindowHeight = 400;	//ウィンドウ高さ
 const char WindowTitle[] = "kunekune";	//ウィンドウタイトル
 
-StageClass *Stage, *NextStage;	//ステージクラスのポインタ
+StageClass *Stage = NULL, *NextStage = NULL;	//ステージクラスのポインタ
 bool FullScreenMode = false;	//フルスクリーンモードかどうか
-PublicClass PublicData;	//共用クラス
+PublicClass *PublicData = NULL;	//共用クラス
 
 //関数のプロトタイプ宣言
 void Init();
@@ -107,7 +106,7 @@ int main(int argc, char *argv[])
 	
 	//メインループ
 	glutMainLoop(); //※決して返ってこない
-	
+printf("おわりだよう！！\n");	
 	return 0;
 }
 
@@ -119,10 +118,13 @@ void Init(void)
 	
 	//最初のステージクラスをnewする
 	Stage = new FIRST_STAGECLASS;
-	//共用クラスへのポインタを渡す
-	Stage->PublicData = &PublicData;
 	//次のステージクラスはNULLにしとく
 	NextStage = NULL;
+
+	//共用クラスをnewする
+	PublicData = new PublicClass();
+	//共用クラスへのポインタを渡す
+	Stage->PublicData = PublicData;
 	
 	//　深度テストON
 	glEnable(GL_DEPTH_TEST);
@@ -270,11 +272,11 @@ void PassiveMotion(int x, int y)
 void Keyboard(unsigned char key, int x, int y)
 {
 	Stage->Input(SC_INPUT_KEY_DOWN, (int)key, x, y);
-	PublicData.Key.SetKeyState(key, true);
+	PublicData->Key.SetKeyState(key, true);
 	
 	switch ( key ){
 	case '\033':	//Esc
-		Close();
+	//	Close();
 		exit(0);
 		break;
 	}
@@ -284,14 +286,14 @@ void Keyboard(unsigned char key, int x, int y)
 void KeyboardUp(unsigned char key, int x, int y)
 {
 	Stage->Input(SC_INPUT_KEY_UP, (int)key, x, y);
-	PublicData.Key.SetKeyState(key, false);
+	PublicData->Key.SetKeyState(key, false);
 }
 
 // 特殊キー処理
 void Special(int key, int x, int y)
 {
 	Stage->Input(SC_INPUT_SPECIALKEY_DOWN, key, x, y);
-	PublicData.Key.SetSpecialKeyState(key, true);
+	PublicData->Key.SetSpecialKeyState(key, true);
 	
 	switch ( key )
 	{
@@ -365,7 +367,7 @@ void Special(int key, int x, int y)
 void SpecialUp(int key, int x, int y)
 {
 	Stage->Input(SC_INPUT_SPECIALKEY_UP, key, x, y);
-	PublicData.Key.SetSpecialKeyState(key, false);
+	PublicData->Key.SetSpecialKeyState(key, false);
 }
 
 
@@ -399,7 +401,7 @@ void FullScreen(void)
 void ChangeStage(StageClass* s)
 {
 	NextStage = s;
-	s->PublicData = &PublicData;
+	s->PublicData = PublicData;
 }
 //次のステージへ変更処理
 void toNextStage(){
@@ -411,12 +413,17 @@ void toNextStage(){
 // 終了処理
 void Close(void)
 {
-	printf("finish!\n");
+	printf("finish! - Main\n");
 	//ゲームモード終了
 	if(glutGameModeGet(GLUT_GAME_MODE_ACTIVE)) glutLeaveGameMode();
 	
 	//ステージクラスを破棄する。デストラクタが呼ばれる。
 	delete Stage;
+	Stage = NULL;
+
+	//共用クラスを破棄する。
+	delete PublicData;
+	PublicData = NULL;
 	
 	// ALUT終了
 	alutExit();

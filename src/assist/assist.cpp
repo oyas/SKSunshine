@@ -9,7 +9,7 @@
 
 
 //fps測定
-char* fps(void)
+const char* fps(bool print)
 {
 	static int fps=0, t1, t2=0;
 	static char txt_fps[20]="";
@@ -19,6 +19,8 @@ char* fps(void)
 		sprintf(txt_fps, "FPS: %g", (1000.0 * fps)/(t1-t2));
 		t2 = t1;
 		fps = 0;
+		if(print)
+			printf("%s\n",txt_fps);
 	}
 	fps++; 
 	

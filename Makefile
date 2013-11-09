@@ -2,7 +2,7 @@ LIBS          = -lglut -lGLU -lGL -lalut -lopenal
 OBJS          = src/Main.o src/assist/assist.o src/Stage/stage1.o src/XMesh/XLoader.o \
 				src/Collision/colli.o src/Sound/sound.o src/Stage/stage0.o \
 				src/assist/object.o src/Stage/stage2.o src/image/PNGtexture.o \
-				src/assist/vector_math.o
+				src/assist/vector_math.o src/Player/player.o
 PROGRAM       = bin/a.out
 LIBS_WIN      = -lopengl32 -lfreeglut -lglu32 -lglew32 -lOpenAL32 -lalut
 PROGRAM_WIN   = bin/a.exe
@@ -33,7 +33,7 @@ clean:;	rm -f $(OBJS) $(PROGRAM)
 .cpp.o:
 #	$(CXX) -W -Wall -c $<
 #	$(CXX) -g -O0 -c $< -o $@
-	$(CXX) -W -Wall -O3 -c $< -o $@
+	$(CXX) -O3 -c $< -o $@
 
 #以下追加の依存関係
 src/Main.o: src/assist/assist.h src/XMesh/XLoader.h

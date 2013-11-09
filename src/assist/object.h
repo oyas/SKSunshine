@@ -59,25 +59,6 @@ public:
 
 
 
-/*-----------------------------------------------------------------------------------*
-	影オブジェクト
-	当たり判定なしスプライト
- *-----------------------------------------------------------------------------------*/
-class ShadowOBJ{
-private:
-	GLuint DisplayList;	//ディスプレイリスト
-	PNGtexture png;
-	void SetRender(float scale);	//ディスプレイリスト作成
-	
-public:
-	Vector3 pos;	//位置
-	Vector3 speed;	//速度(当たり判定で使用)
-	void Set(const char *texName = NULL, float scale=1.0f);	//登録
-	void Render();	//描画
-	ShadowOBJ(const char *texName = NULL, float scale=-1.0f);	//コンストラクタ
-	~ShadowOBJ();
-};
-
 
 
 
