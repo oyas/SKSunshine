@@ -28,6 +28,7 @@ private:
 	Vector3 vertex[4];	//登録面。標準で四角形対応
 	Vector3 sideNormal[4];	//辺の法線。(01,12,23,30の順)
 	Vector3 normal;	//面の法線(正規化済み)
+	void CalcNormal(int _numVertices);	//法線計算等を行う
 public:
 	//当たり判定を行う図形をセット
 	void Set_3(const Vector3 *vec);		//当たり判定を行う三角形をセット(vecから3つ分使用)

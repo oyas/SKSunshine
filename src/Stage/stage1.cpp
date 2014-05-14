@@ -231,8 +231,7 @@ Stage1::~Stage1(){
 //コンストラクタ
 OBJgroup1::OBJgroup1() : ita(24.0, 24.0)
 {
-	//初期位置セット
-	Vector3 v = { 3.0, 3.0, 3.0 };
+	Vector3 v( 3.0, 3.0, 3.0 );
 	
 	box[0].Set(&v,"box1.png");
 	box[0].pos.z = 15.0;//-6.0;
@@ -243,24 +242,22 @@ OBJgroup1::OBJgroup1() : ita(24.0, 24.0)
 	
 	v.z = 4.0;
 	box[2].Set(&v,"box1.png");
-	box[2].pos.z = 31.9;
-	box[2].pos.y = 3.0;
+	box[2].pos.Set( 0.0, 3.0, 31.9);
 	
 	//Ita初期化
 	ita.pos.y = 3.0;
 	//当たり判定用、初期化
 	colliIta.Set_xz4(ita.vertex);
 	//直方体OBJ登録
-	Vector3 v1[3] = { {4.8, 2.2, 2.2},
-						{-0.2, 7.0, -6.0},
-						{-1.6, 1.8, 2.0}  };
+	Vector3 v1[3];
+	v1[0].Set( 4.8, 2.2,  2.2);
+	v1[1].Set(-0.2, 7.0, -6.0);
+	v1[2].Set(-1.6, 1.8,  2.0);
 	box1.Set(v1, "box2.png");	//直方体
-	box1.pos.z = 42.0;
-	box1.pos.y = 3.0;
+	box1.pos.Set( 0.0, 3.0, 42.0);
 		
 	//バウンディングスフィア計算
 	Vector3 Max, min;
-	Max = 0.0; min = 0.0;
 	min.z = -24.0;
 	//Vector3 Max=box[0].pos, min=box[0].pos;
 	for(int i=0; i<3; i++){
@@ -277,9 +274,9 @@ OBJgroup1::OBJgroup1() : ita(24.0, 24.0)
 	Max.z = box1.pos.z + box1.radius() + 10.0;
 	
 	//中心と半径を求める
-	Max -= min; Max = Max * 0.5;	//Maxとminの中間点が中央
-	radius = sqrt( Max.x*Max.x + Max.x*Max.x + Max.y*Max.y + Max.z*Max.z );	//半径
-	Vector3 offset = min + Max;	//中心へのベクトル
+	Vector3 Cnt = (Max - min) * 0.5;	//Maxとminの中間点が中央
+	radius = sqrt( Cnt.x*Cnt.x + Cnt.x*Cnt.x + Cnt.y*Cnt.y + Cnt.z*Cnt.z );	//半径
+	Vector3 offset = min + Cnt;	//中心へのベクトル
 	for(int i=0; i<3; i++){
 		box[i].pos -= offset;
 	}
@@ -287,14 +284,14 @@ OBJgroup1::OBJgroup1() : ita(24.0, 24.0)
 	box1.pos -= offset;
 	
 	//位置セット
-	pos = 0.0; pos += offset;
+	pos += offset;
 	//pos.z += 20.99;
 	pos.y -= 3.0;
 }
 
 void OBJgroup1::Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow)
 {
-	Vector3 v = {_pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z };	
+	Vector3 v(_pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z );	
 	
 	//1番目の緑の箱の回転
 	MATRIX4x4 m;
@@ -307,8 +304,7 @@ void OBJgroup1::Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow)
 	box1.addrot(m);
 		
 		//箱OBJ
-		Vector3 _v;	//box1.NormalForce()でvが破壊されるため、一時的な変数を用意
-		_v = v;
+		Vector3 _v = v;	//box1.NormalForce()でvが破壊されるため、一時的な変数を用意
 		box1.NormalForce( _v, _speed);
 		_pos += _v - v;	//変化分を適用
 		v = _v;
@@ -350,10 +346,10 @@ void OBJgroup1::Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow)
 	for(int i=0; i<3; i++){
 		box[i].NormalForce(v, _speed);
 	}
-		//床１
-		Vector3 nvec;
-		nvec = colliIta.GetNormalForce(_pos, _speed);	//垂直抗力計算
-		_speed.y += nvec.y;
+	//床１
+	Vector3 nvec;
+	nvec = colliIta.GetNormalForce(_pos, _speed);	//垂直抗力計算
+	_speed.y += nvec.y;
 }
 
 
@@ -363,8 +359,7 @@ void OBJgroup1::Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow)
 //コンストラクタ
 OBJgroup2::OBJgroup2()
 {
-	//初期位置セット
-	Vector3 v = { 3.0, 3.0, 3.0 };
+	Vector3 v( 3.0, 3.0, 3.0 );
 	
 	box[0].Set(&v, "box2.png");
 	box[0].pos.z = -15.0;
@@ -376,8 +371,7 @@ OBJgroup2::OBJgroup2()
 	box[2].Set(&v, "box2.png");
 	box_pos[2].z = 28.0;
 	
-	v.x = 5.0;
-	v.z = 5.0;
+	v.Set( 5.0, 3.0, 5.0);
 	box[3].Set(&v, "box.png");
 	box[3].pos.z = 43.0;
 
@@ -405,7 +399,7 @@ OBJgroup2::OBJgroup2()
 	box[3].pos -= offset;
 	
 	//位置セット
-	pos = 0.0; pos += offset;
+	pos += offset;
 	pos.z += 65.0;
 	pos.y -= 2.0;
 	
@@ -415,7 +409,7 @@ OBJgroup2::OBJgroup2()
 
 void OBJgroup2::Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow)
 {
-	Vector3 v = {_pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z }, move;	
+	Vector3 v( _pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z ), move;	
 	
 	//box移動
 	float rcos = cos(rot);
@@ -431,7 +425,8 @@ void OBJgroup2::Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow)
 	move.z = -rsin * 6.0 + box_pos[1].z - box[1].pos.z;
 	box[1].addpos(move);
 	//box3
-	move.x = 0.0; move.y=0.0;
+	move.x = 0.0;
+	move.y = 0.0;
 	move.z = rsin * 7.0 + box_pos[2].z - box[2].pos.z;
 	box[2].addpos(move);
 	//回転角を増やす
@@ -474,8 +469,7 @@ void OBJgroup2::Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow)
 //コンストラクタ
 OBJgroup3::OBJgroup3()
 {
-	//初期位置セット
-	Vector3 v = { 3.0, 0.1, 3.0 };
+	Vector3 v( 3.0, 0.1, 3.0 );
 	
 	//セット
 	for(int i=0; i<8; i++)
@@ -484,66 +478,28 @@ OBJgroup3::OBJgroup3()
 	for(int i=8; i<15; i++)
 		box[i].Set(&v, "box4.png");
 	
-	v.x = 9.0; v.y=6.0; v.z = 6.0;
+	v.Set( 9.0, 6.0, 6.0 );
 	box[15].Set(&v, "box.png");
 	
 	//位置
-	for(int i=0; i<15; i++) box_pos[i] = 0.0;
-	//0
-	box[0].pos.x = 15.0;
-	box[0].pos.z = 3.0;
-	box_pos[0].x = 15.0;
-	box_pos[0].z = 9.0;
-	//1
-	box[1].pos.x = -9.0;
-	box[1].pos.z = 3.0;
-	box_pos[1].x = -9.0;
-	box_pos[1].z = 9.0;
-	//2
-	box_pos[2].x = 3.0;
-	box_pos[2].z = 27.0;
-	//3
-	box_pos[3].x = -3.0;
-	box_pos[3].z = 33.0;
-	//4
-	box_pos[4].x = 9.0;
-	box_pos[4].z = 51.0;
-	//5
-	box_pos[5].x = 15.0;
-	box_pos[5].z = 63.0;
-	//6
-	box_pos[6].x = 3.0;
-	box_pos[6].z = 63.0;
-	//7
-	box_pos[7].x = 3.0;
-	box_pos[7].z = 81.0;
+	box_pos[0].Set( 15.0, 0.0,  9.0 );
+	box_pos[1].Set( -9.0, 0.0,  9.0 );
+	box_pos[2].Set(  3.0, 0.0, 27.0 );
+	box_pos[3].Set( -3.0, 0.0, 33.0 );
+	box_pos[4].Set(  9.0, 0.0, 51.0 );
+	box_pos[5].Set( 15.0, 0.0, 63.0 );
+	box_pos[6].Set(  3.0, 0.0, 63.0 );
+	box_pos[7].Set(  3.0, 0.0, 81.0 );
 	//
-	//8
-	box_pos[8].x = 3.0;
-	box_pos[8].z = 9.0;
-	//9
-	box_pos[9].x = 15.0;
-	box_pos[9].z = 21.0;
-	//10
-	box_pos[10].x = -9.0;
-	box_pos[10].z = 27.0;
-	//11
-	box_pos[11].x = 9.0;
-	box_pos[11].z = 33.0;
-	//12
-	box_pos[12].x = -3.0;
-	box_pos[12].z = 51.0;
-	//13
-	box_pos[13].x = -9.0;
-	box_pos[13].z = 57.0;
-	//14
-	box_pos[14].x = 3.0;
-	box_pos[14].z = 69.0;
+	box_pos[8].Set(  3.0, 0.0,  9.0 );
+	box_pos[9].Set( 15.0, 0.0, 21.0 );
+	box_pos[10].Set( -9.0, 0.0, 27.0 );
+	box_pos[11].Set(  9.0, 0.0, 33.0 );
+	box_pos[12].Set( -3.0, 0.0, 51.0 );
+	box_pos[13].Set( -9.0, 0.0, 57.0 );
+	box_pos[14].Set(  3.0, 0.0, 69.0 );
 	//
-	//15
-	box[15].pos.x = 3.0;
-	box[15].pos.y = -6.0;
-	box[15].pos.z = 96.0;
+	box[15].pos.Set( 3.0, -6.0, 96.0 );
 	
 	
 	//バウンディングスフィア計算
@@ -571,7 +527,7 @@ OBJgroup3::OBJgroup3()
 	box[15].pos -= offset;
 	
 	//全体の位置セット
-	pos = 0.0; pos += offset;
+	pos += offset;
 	pos.x -= 3.0;
 	pos.y += 1.0;
 	pos.z += 113.0;
@@ -583,7 +539,7 @@ OBJgroup3::OBJgroup3()
 
 void OBJgroup3::Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow)
 {
-	Vector3 v = {_pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z }, move;	
+	Vector3 v( _pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z ), move;	
 	
 	//box移動
 	float rcos = cos(rot);
@@ -659,15 +615,12 @@ void OBJgroup3::Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow)
 //コンストラクタ
 OBJgroup4::OBJgroup4()
 {
-	//初期位置セット
-	Vector3 v = { 3.0, 3.0, 3.0 };
+	Vector3 v( 3.0, 3.0, 3.0 );
 	
 	for(int i=0; i<12; i++){
 		for(int j=0; j<6; j++){
 			box[i*6+j].Set(&v, "box5.png");
-			box[i*6+j].pos.x = j*6.0;
-			box[i*6+j].pos.y = 0.0;
-			box[i*6+j].pos.z = i*6.0;
+			box[i*6+j].pos.Set( j*6.0, 0.0, i*6.0 );
 		}
 	}
 	
@@ -696,7 +649,7 @@ OBJgroup4::OBJgroup4()
 	}
 	
 	//位置セット
-	pos = 0.0; pos += offset;
+	pos += offset;
 	pos.x -= 15.0;
 	pos.y -= 2.0;
 	pos.z += 220.0;
@@ -723,7 +676,7 @@ OBJgroup4::OBJgroup4()
 
 void OBJgroup4::Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow)
 {
-	Vector3 v = {_pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z };	
+	Vector3 v( _pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z );	
 	bool on=true;
 	int a=0;
 	
@@ -826,13 +779,12 @@ void OBJgroup4::Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow)
 //コンストラクタ
 OBJgroup5::OBJgroup5()
 {
-	//初期位置セット
-	Vector3 v = { 3.0, 3.0, 3.0 };
+	Vector3 v( 3.0, 3.0, 3.0 );
 	
 	box[0].Set(&v,"box6.png");
 	box[0].pos.y = 0.2;
 	
-	v.x = 15.0; v.z = 15.0;
+	v.Set( 15.0, 3.0, 15.0 );
 	box[1].Set(&v,"box.png");
 	
 	//バウンディングスフィア計算
@@ -859,7 +811,7 @@ OBJgroup5::OBJgroup5()
 	}
 	
 	//位置セット
-	pos = 0.0; pos += offset;
+	pos += offset;
 	pos.z += 305.0;
 	pos.y -= 3.0;
 	
@@ -869,7 +821,7 @@ OBJgroup5::OBJgroup5()
 
 void OBJgroup5::Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow)
 {
-	Vector3 v = {_pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z };	
+	Vector3 v( _pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z );	
 	
 	glPushMatrix();
 	

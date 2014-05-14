@@ -530,7 +530,7 @@ OBJgroup_Meiro::OBJgroup_Meiro()
 	miti[X_RETU/2][0] = 1;
 	
 	//ボックス作成
-	Vector3 v = { BOX_SIZE/2.0, BOX_SIZE/2.0, BOX_SIZE/2.0 };
+	Vector3 v( BOX_SIZE/2.0, BOX_SIZE/2.0, BOX_SIZE/2.0 );
 	
 	box.Set(&v,"box2.png");
 	box.pos = 0.0;
@@ -548,7 +548,7 @@ OBJgroup_Meiro::OBJgroup_Meiro()
 
 void OBJgroup_Meiro::Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow)
 {
-	Vector3 v = {_pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z };	
+	Vector3 v( _pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z );	
 	
 	//続きの迷路作成
 	if( !end_f && nobasu() ) check();

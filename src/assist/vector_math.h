@@ -78,6 +78,8 @@ struct Vector3
 		out.x = this->x*in; out.y = this->y*in; out.z = this->z*in;
 		return out;
 	}
+	Vector3(float _x=0.0, float _y=0.0, float _z=0.0){ x=_x; y=_y; z=_z; }
+	void Set(float _x, float _y, float _z){ x=_x; y=_y; z=_z; }
 };
 
 //

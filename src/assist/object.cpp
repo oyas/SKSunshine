@@ -10,7 +10,6 @@
  *-----------------------------------------------------------------------------------*/
 //コンストラクタ
 Ita::Ita(float u, float v){
-	pos.x=0.0; pos.y=0.0; pos.z=0.0;
 	size.x = 0.0;
 	size.y = 0.0;
 	SetRender(u, v);
@@ -35,21 +34,22 @@ void Ita::SetRender(float u, float v){
 	for (int j = -6; j < 6; ++j) {
 		for (int i = -6; i < 6; ++i) {
 			glMaterialfv(GL_FRONT, GL_DIFFUSE, ground[(i + j) & 1]);
-			glVertex3f((GLfloat)i*(u/12.0), 0.0, (GLfloat)j*(v/12.0));
-			glVertex3f((GLfloat)i*(u/12.0), 0.0, (GLfloat)(j + 1)*(v/12.0));
-			glVertex3f((GLfloat)(i + 1)*(u/12.0), 0.0, (GLfloat)(j + 1)*(v/12.0));
-			glVertex3f((GLfloat)(i + 1)*(u/12.0), 0.0, (GLfloat)j*(v/12.0));
+			glVertex3f( (GLfloat) i     *(u/12.0), 0.0, (GLfloat) j     *(v/12.0) );
+			glVertex3f( (GLfloat) i     *(u/12.0), 0.0, (GLfloat)(j + 1)*(v/12.0) );
+			glVertex3f( (GLfloat)(i + 1)*(u/12.0), 0.0, (GLfloat)(j + 1)*(v/12.0) );
+			glVertex3f( (GLfloat)(i + 1)*(u/12.0), 0.0, (GLfloat) j     *(v/12.0) );
 		}
 	}
 	glEnd();
 	glEndList();	//ディスプレイリストおわり
 	
-	size.x = u; size.y = v;
+	size.x = u;
+	size.y = v;
 	//頂点位置保存
-	vertex[0].x = -u/2; vertex[0].y = 0.0; vertex[0].z = -v/2;
-	vertex[1].x =  u/2; vertex[1].y = 0.0; vertex[1].z = -v/2;
-	vertex[2].x =  u/2; vertex[2].y = 0.0; vertex[2].z =  v/2;
-	vertex[3].x = -u/2; vertex[3].y = 0.0; vertex[3].z =  v/2;
+	vertex[0].Set( -u/2, 0.0, -v/2);
+	vertex[1].Set(  u/2, 0.0, -v/2);
+	vertex[2].Set(  u/2, 0.0,  v/2);
+	vertex[3].Set( -u/2, 0.0,  v/2);
 }
 
 //描画
@@ -68,11 +68,6 @@ void Ita::Render(){
  *-----------------------------------------------------------------------------------*/
 //コンストラクタ
 sankakOBJ::sankakOBJ(){
-	for(int i=0; i<3; i++){
-		oVertex[i].x=0.0; oVertex[i].y=0.0; oVertex[i].z=0.0;
-		vertex[i].x=0.0; vertex[i].y=0.0; vertex[i].z=0.0;
-	}
-	pos = 0.0;
 	DisplayList = 0;
 	max_y = 0.0;
 	laston = 0;
@@ -87,12 +82,6 @@ void sankakOBJ::Set(Vector3 *vec)
 	}
 	//当たり判定登録
 	colliOBJ.Set_3(vertex);
-	
-	//テクスチャ読み込み
-#if 0	//借り処置。あとで削除
-	pngInfo info;
-	texturePNG = pngBind("test.png", PNG_NOMIPMAP, PNG_ALPHA, &info, GL_CLAMP, GL_NEAREST, GL_NEAREST);
-#endif
 	
 	//UV
 	float uv[3][2] = { {0.0,0.0}, {1.0,0.0}, {0.0,1.0} };
@@ -142,7 +131,7 @@ void sankakOBJ::addrot(MATRIX4x4 &m)
 void sankakOBJ::NormalForce(Vector3 &_pos, Vector3 &_speed)
 {
 	//float y = 0.0;
-	Vector3 v = {_pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z }, nvec;	
+	Vector3 v( _pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z ), nvec;	
 	
 	if( laston==3 ){	//前回乗ってて回転したとき
 		float vm[4];
@@ -222,10 +211,6 @@ const int boxOBJ::index[6][4] = { {0, 1, 2, 3},
 						{7, 6, 5, 4} };
 //コンストラクタ
 boxOBJ::boxOBJ() {
-	for(int i=0; i<8; i++){
-		oVertex[i].x=0.0; oVertex[i].y=0.0; oVertex[i].z=0.0;
-		vertex[i].x=0.0; vertex[i].y=0.0; vertex[i].z=0.0;
-	}
 	DisplayList = 0;
 	texturePNG = 0;
 	laston = 0;
@@ -240,9 +225,7 @@ boxOBJ::boxOBJ() {
 			Matrix[i] = 0.0;
 		}
 	}
-	move = 0.0;
 	isSet = false;
-	pos = 0.0;
 }
 //登録
 void boxOBJ::Set(Vector3 *vec, const char *texName)
@@ -255,13 +238,13 @@ void boxOBJ::Set(Vector3 *vec, const char *texName)
 	oVertex[0].x = fabs(vec->x);
 	oVertex[0].y = fabs(vec->y);
 	oVertex[0].z = fabs(vec->z);
-	oVertex[1].x = -oVertex[0].x; oVertex[1].y =  oVertex[0].y; oVertex[1].z =  oVertex[0].z; 
-	oVertex[2].x = -oVertex[0].x; oVertex[2].y = -oVertex[0].y; oVertex[2].z =  oVertex[0].z; 
-	oVertex[3].x =  oVertex[0].x; oVertex[3].y = -oVertex[0].y; oVertex[3].z =  oVertex[0].z; 
-	oVertex[4].x =  oVertex[0].x; oVertex[4].y =  oVertex[0].y; oVertex[4].z = -oVertex[0].z; 
-	oVertex[5].x = -oVertex[0].x; oVertex[5].y =  oVertex[0].y; oVertex[5].z = -oVertex[0].z; 
-	oVertex[6].x = -oVertex[0].x; oVertex[6].y = -oVertex[0].y; oVertex[6].z = -oVertex[0].z; 
-	oVertex[7].x =  oVertex[0].x; oVertex[7].y = -oVertex[0].y; oVertex[7].z = -oVertex[0].z; 
+	oVertex[1].Set( -oVertex[0].x,  oVertex[0].y,  oVertex[0].z); 
+	oVertex[2].Set( -oVertex[0].x, -oVertex[0].y,  oVertex[0].z); 
+	oVertex[3].Set(  oVertex[0].x, -oVertex[0].y,  oVertex[0].z); 
+	oVertex[4].Set(  oVertex[0].x,  oVertex[0].y, -oVertex[0].z); 
+	oVertex[5].Set( -oVertex[0].x,  oVertex[0].y, -oVertex[0].z); 
+	oVertex[6].Set( -oVertex[0].x, -oVertex[0].y, -oVertex[0].z); 
+	oVertex[7].Set(  oVertex[0].x, -oVertex[0].y, -oVertex[0].z); 
 	for(int i=0; i<8; i++){
 		vertex[i] = oVertex[i];
 	}
@@ -367,7 +350,7 @@ void boxOBJ::addpos(Vector3 &vec){
 //垂直抗力の取得と適用
 void boxOBJ::NormalForce(Vector3 &_pos, Vector3 &_speed)
 {
-	Vector3 v = {_pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z }, nvec;	
+	Vector3 v( _pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z ), nvec;	
 	
 	//移動したとき
 	if( move.x!=0.0 || move.y!=0.0 || move.z!=0.0 ){
@@ -442,7 +425,7 @@ boxOBJ::~boxOBJ(){
 //垂直抗力の取得と適用
 void boxOBJ::NormalForceIce(Vector3 &_pos, Vector3 &_speed)
 {
-	Vector3 v = {_pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z }, nvec;	
+	Vector3 v( _pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z ), nvec;	
 	
 	//移動したとき
 	if( move.x!=0.0 || move.y!=0.0 || move.z!=0.0 ){
@@ -497,7 +480,7 @@ void boxOBJ::NormalForceIce(Vector3 &_pos, Vector3 &_speed)
 //影用
 //影の表示位置の決定と適用
 void boxOBJ::NormalForceShadow( Vector3 _pos, ShadowOBJ &shadow ){
-	Vector3 v = {_pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z };	
+	Vector3 v( _pos.x-pos.x, _pos.y-pos.y, _pos.z-pos.z );	
 
 	for(int i=0; i<6; i++){
 		if( colli[i].ColliLine(v, shadow.speed) ){
