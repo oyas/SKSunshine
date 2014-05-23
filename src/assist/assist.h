@@ -54,9 +54,15 @@ static const int Keys_SK[] = {
 	各ステージの処理はこのクラスを継承したクラスから行う。
  *-----------------------------------------------------------------------------------*/
 class StageClass{
+protected:
+	//共用クラスへのポインタ
+	PublicClass *PublicData;
+
 public:
 	//コンストラクタを作って初期化をするとよい。
-	//StageClass();
+	StageClass( PublicClass *pd ){
+		PublicData = pd;
+	}
 	
 	//画面再描画時によばれる(1フレーム毎に呼ばれる)
 	virtual void Disp() = 0;
@@ -93,9 +99,6 @@ public:
 	
 	//デストラクタ
 	virtual ~StageClass(){}
-
-	//共用クラスへのポインタ
-	PublicClass *PublicData;
 };
 
 

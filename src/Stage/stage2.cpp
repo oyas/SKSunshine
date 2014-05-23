@@ -103,7 +103,7 @@ static float Add_jump = 0.0;
  *-----------------------------------------------------------------------------------*/
 
 //コンストラクタ（初期化）
-Stage2::Stage2() : sound("whistle.wav")
+Stage2::Stage2( PublicClass *pd ) : StageClass(pd), sound("whistle.wav")
 	//板のコンストラクタの引数を渡してやる。メンバーイニシャライザ
 	//(このコンストラクタが実行される前に、板のコンストラクタは実行される)
 {
@@ -449,12 +449,12 @@ void Stage2::Disp(){
 	if( game == GAME_CLEAR ){	//CLEAR
 		glCallList(DisplayList_CLEAR);	//クリア表示
 		if(game_timer++ > 120){
-			ChangeStage(new Stage0);	//Stage0に戻る
+			ChangeStage( new Stage0(PublicData) );	//Stage0に戻る
 		}
 	}else if( game <= 0 ){	//MISS
 		glCallList(DisplayList_MISS);	//ミス表示
 		if(game_timer++ > 60){
-			ChangeStage(new Stage0);
+			ChangeStage( new Stage0(PublicData) );
 		}
 	}
 }

@@ -58,6 +58,7 @@ public:
 	void SetPublicClass(PublicClass *pd){PublicData = pd;}	//親(PublicClass)から一回だけ呼ばれる
 
 	void ResetPos(float x = 0.0, float y = 10.0, float z = 0.0);	//初期位置へ戻す
+	void ResetAng();	//初期角度へ戻す
 	void Move(bool keystate[256]);	//現在のキー状態にしたがって動く
 	void addAngle(float rot);	//どせいの向きを変更
 	Vector3 UpdateSpeed(float gravity);	//スピードを更新

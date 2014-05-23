@@ -30,7 +30,7 @@
  *-----------------------------------------------------------------------------------*/
 
 //コンストラクタ（初期化）
-Stage1::Stage1() : sound("whistle.wav")
+Stage1::Stage1( PublicClass *pd ) : StageClass(pd), sound("whistle.wav")
 	//板のコンストラクタの引数を渡してやる。メンバーイニシャライザ
 	//(このコンストラクタが実行される前に、板のコンストラクタは実行される)
 {
@@ -41,6 +41,10 @@ Stage1::Stage1() : sound("whistle.wav")
 	light0pos[3] = 1.0;
 	//カメラ角度
 	cam_z=20.0; cam_r=M_PI; cam_rx=M_PI_4/2;
+
+	//プレイヤーの初期設定
+	PublicData->Player.ResetPos();
+	PublicData->Player.ResetAng();
 		
 	//スコア初期化
 	//total=0;
@@ -196,12 +200,12 @@ void Stage1::Disp(){
 	if( game == GAME_CLEAR ){	//CLEAR
 		glCallList(DisplayList_CLEAR);	//クリア表示
 		if(game_timer++ > 120){
-			ChangeStage(new Stage2);	//Stage2へ進む
+			ChangeStage( new Stage2(PublicData) );	//Stage2へ進む
 		}
 	}else if( game <= 0 ){	//MISS
 		glCallList(DisplayList_MISS);	//ミス表示
 		if(game_timer++ > 60){
-			ChangeStage(new Stage0);	//Stage0に戻る
+			ChangeStage( new Stage0(PublicData) );	//Stage0に戻る
 		}
 	}
 }

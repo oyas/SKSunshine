@@ -149,13 +149,8 @@ PlayerClass::PlayerClass(){
 	model.Load(a, 0);
 	//Xオブジェクト作成
 	dosei.setXModel(&model);
-	//dosei.pos.y = 10.0; dosei.pos.z = 0.0; //どせい向き
 	ResetPos();
-	dosei.angle = 180;
-	dosei.ang.y = 1.0;
-	//どせいに関するもの初期化
-	dash_vec.x=0.0; dash_vec.y=0.0; dash_vec.z=1.0;	//どせいの前方向ベクトル
-	dash_svec.x=1.0; dash_svec.y=0.0; dash_svec.z=0.0;	//どせいの横方向ベクトル
+	ResetAng();
 
 	//当たり判定があったか
 	onface = 0;
@@ -175,6 +170,15 @@ void PlayerClass::ResetPos(float x, float y, float z ){
 	dosei.pos.y = y;
 	dosei.pos.z = z;
 	dosei.speed = 0.0;
+}
+
+//初期角度にもどす
+void PlayerClass::ResetAng(){
+	dosei.angle = 180;
+	dosei.ang.y = 1.0;
+	//どせいに関するもの初期化
+	dash_vec.Set(0.0, 0.0, 1.0);	//どせいの前方向ベクトル
+	dash_svec.Set(1.0, 0.0, 0.0);	//どせいの横方向ベクトル
 }
 
 //キー状態に応じて位置更新

@@ -127,7 +127,7 @@ private:
 	
 public:
 	//コンストラクタ
-	Stage1();
+	Stage1( PublicClass *pd );
 	
 	//画面再描画時によばれる(1フレーム毎に呼ばれる)
 	virtual void Disp();

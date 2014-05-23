@@ -8,7 +8,7 @@
 //定数
 #define GAMEMODE_FULLSCREEN 0	//ゲームモードを有効にする
 #define TIMER_WAIT 33	//タイマーの待ち時間（0だとタイマー無効）
-#define FIRST_STAGECLASS Stage0()	//最初に呼ばれるステージクラス
+#define FIRST_STAGECLASS Stage0	//最初に呼ばれるステージクラス
 
 
 //グローバル変数の宣言
@@ -116,16 +116,15 @@ void Init(void)
 	//　バックバッファをクリアする色の指定
 	glClearColor(0.5, 0.5, 1.0, 1.0);
 	
+	//共用クラスをnewする
+	PublicData = new PublicClass();
+	
+#define FIRST_STAGECLASS_FULLPRM FIRST_STAGECLASS(PublicData)
 	//最初のステージクラスをnewする
-	Stage = new FIRST_STAGECLASS;
+	Stage = new FIRST_STAGECLASS_FULLPRM;
 	//次のステージクラスはNULLにしとく
 	NextStage = NULL;
 
-	//共用クラスをnewする
-	PublicData = new PublicClass();
-	//共用クラスへのポインタを渡す
-	Stage->PublicData = PublicData;
-	
 	//　深度テストON
 	glEnable(GL_DEPTH_TEST);
 	
@@ -401,7 +400,6 @@ void FullScreen(void)
 void ChangeStage(StageClass* s)
 {
 	NextStage = s;
-	s->PublicData = PublicData;
 }
 //次のステージへ変更処理
 void toNextStage(){

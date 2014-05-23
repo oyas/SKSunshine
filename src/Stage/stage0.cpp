@@ -4,9 +4,9 @@
 #include "stage1.h"
 #include "stage2.h"
 
-#define NEXT_STAGE Stage1
+#define NEXT_STAGE Stage1(PublicData)
 
-Stage0::Stage0()
+Stage0::Stage0( PublicClass *pd ) : StageClass(pd)
 {
 	//背景作成
 	texture_BACK.load("yama.png");	//背景画像読み込み
@@ -42,7 +42,7 @@ void Stage0::Disp()
 
 	//2が押されたときStage2へ
 	if( PublicData->Key.state['2'] ){
-		ChangeStage(new Stage2);
+		ChangeStage( new Stage2(PublicData) );
 	}
 
 	//スペースキーが押されたとき

@@ -25,7 +25,7 @@ private:
 	
 public:
 	//コンストラクタ
-	Stage0();
+	Stage0( PublicClass *pd );
 	
 	//画面再描画時によばれる(1フレーム毎に呼ばれる)
 	void Disp();
