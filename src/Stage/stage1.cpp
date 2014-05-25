@@ -350,6 +350,7 @@ void OBJgroup1::Disp_Colli(Vector3 &_pos, Vector3 &_speed, ShadowOBJ &shadow)
 	for(int i=0; i<3; i++){
 		box[i].NormalForce(v, _speed);
 	}
+	box[1].NormalForce(v, _speed);	//2度目の当たり判定(すり抜け防止)
 	//床１
 	Vector3 nvec;
 	nvec = colliIta.GetNormalForce(_pos, _speed);	//垂直抗力計算

@@ -47,9 +47,9 @@ void Ita::SetRender(float u, float v){
 	size.y = v;
 	//頂点位置保存
 	vertex[0].Set( -u/2, 0.0, -v/2);
-	vertex[1].Set(  u/2, 0.0, -v/2);
+	vertex[1].Set( -u/2, 0.0,  v/2);
 	vertex[2].Set(  u/2, 0.0,  v/2);
-	vertex[3].Set( -u/2, 0.0,  v/2);
+	vertex[3].Set(  u/2, 0.0, -v/2);
 }
 
 //描画

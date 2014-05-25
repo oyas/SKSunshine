@@ -25,7 +25,8 @@ class Colli{
 private:
 	unsigned char type;	//登録面の種類 上のdefine参照
 	unsigned char numVertices;	//頂点数。3か4
-	Vector3 vertex[4];	//登録面。標準で四角形対応
+	Vector3 vertex[4];	//登録面の頂点。標準で四角形対応
+	Vector3 vector[4];	//登録面の辺。vector[i]->vector[i+1]のベクトル。
 	Vector3 sideNormal[4];	//辺の法線。(01,12,23,30の順)
 	Vector3 normal;	//面の法線(正規化済み)
 	void CalcNormal(int _numVertices);	//法線計算等を行う
@@ -41,6 +42,7 @@ public:
 	bool ColliLine(Vector3 vec, Vector3 fvec);			//直線と登録面が交わるかどうか(始点vecのfvecを直線とする)
 	Vector3 GetColliPoint(Vector3 vec, Vector3 fvec);	//衝突点を求める
 	Vector3 GetNormalForce(Vector3 vec, Vector3 fvec);	//垂直抗力を返す
+	Vector3 _GetNormalForce(Vector3 vec, Vector3 fvec);	//垂直抗力を返す(外積を用いる)
 	const Vector3 &GetNormal(){return normal;}		//垂直ベクトルを返す
 	//コンストラクタ・デストラクタ
 	Colli();
