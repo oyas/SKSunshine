@@ -112,9 +112,10 @@ void ChangeStage(StageClass* s);	//ステージ変更(Main.cppで定義)sは次�
 
 /*-----------------------------------------------------------------------------------*
 	FPS測定
-	毎フレームごとに呼ぶことで、"FPS: --.-"という形式の文字列のアドレスを返す。
+	毎フレームごとに呼ぶことで、fpsを計算してくれる。
+	print:	trueの時、"FPS: --.-"という形式の文字列を毎秒標準出力に出力する。
  *-----------------------------------------------------------------------------------*/
-const char* fps(bool print);
+float fps(bool print);
 
 
 /*-----------------------------------------------------------------------------------*
@@ -132,21 +133,14 @@ void setDefaultMaterial();
 void DRAW_STRING(int x, int y, char *string, void *font);
  
 
+
 /*-----------------------------------------------------------------------------------*
-	キー入力補助
-	KeyBuf: キーの入力状態をもつ変数。Keys配列の番号と対応するビットがそのキーの状態を表す。
-	key: 状態を変更したいキー、または調べたいキーを指定する。
-	onoff: 状態変更。true=押された false=離された
-	Keys: 状態を知りたいキーの配列。
-	size: Keysの要素数。
+	キー入力管理クラス
+	キーの入力状態をstate[key]に配列として持っておく。
+	state[key]は直接参照できるが値の変更はSetKeyState()等を使うべきである。
+	key:	状態を変更したいキーを指定する。
+	onoff:	状態変更。true=押された false=離された
  *-----------------------------------------------------------------------------------*/
-//KeyBufのビットを変更する。
-bool SetKeyState(int *KeyBuf, int key, bool onoff, int *Keys, int size);
-
-//状態を取得。押されていたらtrue
-bool GetKeyState(int *KeyBuf, int key, int *Keys, int size);	//自前でKeyBufのビットを調べることをおすすめする。
-
-
 class KeyInput{
 public:
 	bool state[256];	//キーの入力状態 0:離れている 1:押されている
@@ -161,16 +155,6 @@ public:
 };
 
 
-/*----------------------------------------------------------------------------------*
-	画像表示
-	PNG画像を読み込んで、ディスプレイリストを作る
-	filename  : 読み込むPNG画像のファイル名
-	*texture  : 作成したテクスチャのIDを格納する変数へのポインタ
-	pos[4][3] : 表示位置の指定。(左上,左下,右下,右上)z座標は0推奨。NULLを指定するとデフォルトの位置になる。
-	BlendON   : アルファブレンド有効
- *----------------------------------------------------------------------------------*/
-//GLuin CreatePNGDisplayList(const char *filename, GLuint *texture, float pos[4][3], bool BlendON);
-
 
 /*-----------------------------------------------------------------------------------*
 	PublicClass
@@ -182,9 +166,7 @@ public:
 	KeyInput Key;
 	PlayerClass Player;
 
-	PublicClass(){
-		Player.SetPublicClass(this);
-	}
+	PublicClass() : Player(this) {}
 };
 
 

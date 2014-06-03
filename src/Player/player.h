@@ -54,9 +54,8 @@ public:
 	//影用
 	ShadowOBJ shadow;
 
-	PlayerClass();
-	void SetPublicClass(PublicClass *pd){PublicData = pd;}	//親(PublicClass)から一回だけ呼ばれる
-
+	PlayerClass(PublicClass *pd);
+	
 	void ResetPos(float x = 0.0, float y = 10.0, float z = 0.0);	//初期位置へ戻す
 	void ResetAng();	//初期角度へ戻す
 	void Move(bool keystate[256]);	//現在のキー状態にしたがって動く

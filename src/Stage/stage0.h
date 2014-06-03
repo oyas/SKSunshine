@@ -5,16 +5,12 @@
 class Stage0 : public StageClass{
 private:
 	//背景
-	GLuint DisplayList_BACK;	//背景のディスプレイリスト
 	PNGtexture texture_BACK;	//テクスチャ・ディスプレイリスト
 	// タイトル画像
-	GLuint DisplayList_TITLE;	//ディスプレイリスト
 	PNGtexture texture_TITLE;	//テクスチャ・ディスプレイリスト
 	//「スペースキーでスタート」
-	GLuint DisplayList_Space;	//ディスプレイリスト
 	PNGtexture texture_Space;	//テクスチャ・ディスプレイリスト
 	//説明画像
-	GLuint DisplayList_Setumei;	//ディスプレイリスト
 	PNGtexture texture_Setumei;	//テクスチャ・ディスプレイリスト
 	//点滅用タイマー
 	int timer;

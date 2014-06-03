@@ -80,9 +80,10 @@ private:
 	GLfloat light0pos[4];	//ライトの位置
 	char *fpstxt, fpstxtb[20];	//fps測定用
 	float cam_z, cam_r, cam_rx;	//カメラの向き z:距離 r:横周り rx:縦周り
-	int key_on;	//キーの状態
-	int yaziru;	//特殊キーの状態 矢印キー等
-	int total;	//トータルスコア
+//	int key_on;	//キーの状態
+//	int yaziru;	//特殊キーの状態 矢印キー等
+	bool *keystate;	//キーの入力状態。PublicData->Key.state[256]へのショートカット
+//	int total;	//トータルスコア
 	char str[64], str_t[64], str_a[64];	//スコア文字列
 	//sankakOBJ sanka;	//三角形クラス
 	//char c[512];

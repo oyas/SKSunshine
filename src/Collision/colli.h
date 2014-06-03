@@ -13,8 +13,6 @@
 #define COLLI_TYPE_NONE 0	//未登録
 #define COLLI_TYPE_3 1		//三角形
 #define COLLI_TYPE_4 2		//四角形
-#define COLLI_TYPE_XZ3 3	//XZ平面に並行な三角形
-#define COLLI_TYPE_XZ4 4	//XZ平面に並行な四角形
 
 
 /*-----------------------------------------------------------------------------------*
@@ -34,7 +32,6 @@ public:
 	//当たり判定を行う図形をセット
 	void Set_3(const Vector3 *vec);		//当たり判定を行う三角形をセット(vecから3つ分使用)
 	void Set_4(const Vector3 *vec);		//四角形（vecから4つ分使用）
-	void Set_xz4(const Vector3 *vec);		//XZ平面と並行な四角形（vecから4つ分使用）
 	//当たり判定
 	float GetHigh(Vector3 vec);	//点までの距離測定
 	bool ColliPoint(Vector3 vec);	//点が登録面内かどうか	

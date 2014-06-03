@@ -9,22 +9,22 @@
 
 
 //fps測定
-const char* fps(bool print)
+float fps(bool print)
 {
-	static int fps=0, t1, t2=0;
-	static char txt_fps[20]="";
+	static int frames=0, t1, t2=0;
+	static float fps=0.0;
 	
 	t1 = glutGet(GLUT_ELAPSED_TIME);
 	if(t1 - t2 > 1000) {
-		sprintf(txt_fps, "FPS: %g", (1000.0 * fps)/(t1-t2));
+		fps = (1000.0 * frames)/(t1-t2);
 		t2 = t1;
-		fps = 0;
+		frames = 0;
 		if(print)
-			printf("%s\n",txt_fps);
+			printf("FPS: %g\n", fps);
 	}
-	fps++; 
+	frames++; 
 	
-	return txt_fps;
+	return fps;
 }
 
 
@@ -76,53 +76,9 @@ void DRAW_STRING(int x, int y, char *string, void *font)
 
 
 /*-----------------------------------------------------------------------------------*
-	キー入力補助
-	KeyBufのKeysと対応するビットを変更する。
+	キー入力管理クラス
+	キーの入力状態をstate[key]に配列として持っておく。
  *-----------------------------------------------------------------------------------*/
-
-//KeyBufの状態を変更する。
-bool SetKeyState(int *KeyBuf, int key, bool onoff, int *Keys, int size)
-{
-	//サイズを要素数に変換	
-	size /= sizeof(int);
-
-	//サイズが大き過ぎないかチェック
-	if( size >= sizeof(int)*8 )
-		return false;
-	
-	//サイズ分処理
-	for(int i=0; i<size; i++){
-		if( key == Keys[i] ){
-			int k=1;
-			if( onoff )
-				*KeyBuf |= k << i;	//ビットON
-			else
-				*KeyBuf &= ~( k << i );	//ビットOFF
-		}
-	}
-	
-	return true;
-}
-
-//状態を取得。押されていたらtrue
-bool GetKeyState(int *KeyBuf, int key, int *Keys, int size)
-{
-	//サイズが大き過ぎないかチェック
-	if( size >= sizeof(int)*8 )
-		return false;
-	
-	//サイズ分処理
-	for(int i=0; i<size; i++){
-		if( key == Keys[i] ){
-			int k=1;
-			return *KeyBuf & (k<<i);
-		}
-	}
-	
-	return true;
-}
-
-//キー入力管理クラス
 //キー状態更新
 bool KeyInput::SetKeyState(unsigned char key, bool onoff){
 	if( key > 127 )
@@ -144,69 +100,6 @@ bool KeyInput::SetSpecialKeyState(int key, bool onoff){
 
 	return false;
 }
-
-
-/*-----------------------------------------------------------------------------------*
-	画像表示
-	PNG画像を読み込んで、ディスプレイリストを作る
- *-----------------------------------------------------------------------------------
-//filename  : 読み込むPNG画像のファイル名
-//texture   : 作成したテクスチャのIDを格納する変数
-//pos[4][3] : 表示位置の指定。(頂点４つ)z座標は0推奨。NULLを指定するとデフォルトの位置になる。
-//BlendON   : アルファブレンド有効
-GLuint CreatePNGDisplayList(const char *filename, GLuint *texture, float pos[4][3], bool BlendON)//, std::vector<unsigned char> &image)
-{
-	GLuint DisplayList;
-	
-	pngInfo info;
-	//*texture = pngBind(filename, PNG_NOMIPMAP, PNG_ALPHA, &info, GL_CLAMP, GL_NEAREST, GL_NEAREST);
-	*texture = pngBind(filename, PNG_BUILDMIPMAP, PNG_ALPHA, &info, GL_CLAMP, GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-
-
-//PicoPNGによるPNG読み込み
-	*texture = loadPNGbind(filename);//, image);
-
-//画像表示ポリゴン作成
-	DisplayList = glGenLists(1);//ディスプレイリストを作成
-	glNewList(DisplayList, GL_COMPILE); //コンパイルのみ
-	
-	glLoadIdentity();
-	glDisable(GL_DEPTH_TEST);//いろいろ無効にする
-	glDisable(GL_LIGHTING);
-	glDisable(GL_LIGHT0);
-	if(BlendON == true) glEnable(GL_BLEND); //GL_ALPHA_TEST);// アルファテスト有効
-	glColor3f(1.0, 1.0, 1.0);
-	//カメラ
-	gluLookAt(0, 0, -3.0, 0,0,0, 0.0,1.0,0.0);
-	//UV
-	float uv[4][2] = { {0.0,0.0}, {0.0,1.0}, {1.0,1.0}, {1.0,0.0} };
-	//pos
-	if(pos == NULL){
-		float pos_default[4][3] = { {1.0,1.0,0.0}, {1.0,-1.0,0.0}, {-1.0,-1.0,0.0}, {-1.0,1.0,0.0} };
-		pos = pos_default;	//ちょっと強引だがデフォルトのposを設定
-	}
-	//テクスチャマッピング有効
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, *texture);//バインド
-	glBegin(GL_QUADS);
-		for(int i=0; i<4; i++){
-			glTexCoord2fv( uv[i] );
-			glVertex3fv( pos[ i ] );
-		}
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, 0);//バインドしたのをもとに戻す
-	//元に戻す
-	glDisable(GL_TEXTURE_2D);
-	if(BlendON == true) glDisable(GL_BLEND); //GL_ALPHA_TEST);// アルファテスト無効
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	
-	glEndList();	//ディスプレイリストおわり
-	
-	return DisplayList;	//実態はただの整数なのでそのまま渡す。
-}
-*/
 
 
 

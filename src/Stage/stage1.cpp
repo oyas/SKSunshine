@@ -40,17 +40,14 @@ Stage1::Stage1( PublicClass *pd ) : StageClass(pd), sound("whistle.wav")
 	light0pos[2] = 5.0;
 	light0pos[3] = 1.0;
 	//カメラ角度
-	cam_z=20.0; cam_r=M_PI; cam_rx=M_PI_4/2;
+	cam_z  = 20.0;
+	cam_r  = M_PI;
+	cam_rx = M_PI_4/2;
 
 	//プレイヤーの初期設定
 	PublicData->Player.ResetPos();
 	PublicData->Player.ResetAng();
 		
-	//スコア初期化
-	//total=0;
-	//スコア用文字列
-//	str[0]='\0'; str_t[0]='\0'; 
-	str_a[0] = '\0';
 	//情報表示
 	std::cout << "Vendor :"<<glGetString(GL_VENDOR)<<'\n';
 	std::cout << "GPU : "<<glGetString(GL_RENDERER) <<'\n';
@@ -59,21 +56,21 @@ Stage1::Stage1( PublicClass *pd ) : StageClass(pd), sound("whistle.wav")
 
 	//背景画像作成
 	float pos[4][3] = { {2.3,1.3,0.0}, {2.3,-1.3,0.0}, {-2.3,-1.3,0.0}, {-2.3,1.3,0.0} };
-	textureBACK = png_back.load("yama.png");
-	DisplayList_BACK = png_back.CreateDisplayList(pos, false);
+	png_back.load("yama.png");
+	png_back.CreateDisplayList(pos, false);
 	
 	// MISS画像作成
-	textureMISS = png_miss.load("miss.png");
-	DisplayList_MISS = png_miss.CreateDisplayList(NULL, true);
+	png_miss.load("miss.png");
+	png_miss.CreateDisplayList(NULL, true);
 	
 	// CLEAR画像作成
-	textureCLEAR = png_clear.load("clear.png");
-	DisplayList_CLEAR = png_clear.CreateDisplayList(NULL, true);
+	png_clear.load("clear.png");
+	png_clear.CreateDisplayList(NULL, true);
 	
 	//ゲーム関連
-	game = GAME_ZIKI;
-	game_timer = 0;
-	sprintf(str_a,"x%d",game);
+	game_ziki = GAME_ZIKI;	//残機設定
+	sprintf(str_ziki, "x%d", game_ziki);	//表示用文字列を作る
+	game_timer = 0;		//"CLEAR"等の表示時間を測るための変数
 
 	printf("stage1 初期化完了。\n");	//デバッグ用
 
@@ -82,10 +79,10 @@ Stage1::Stage1( PublicClass *pd ) : StageClass(pd), sound("whistle.wav")
 
 //画面再描画時によばれる(1フレーム毎に呼ばれる)
 void Stage1::Disp(){
-	keystate = &PublicData->Key.state[0];
+	keystate = PublicData->Key.state;
 	
 	//背景描画
-	glCallList(DisplayList_BACK);
+	glCallList( png_back.DisplayList );
 	
 	glLoadIdentity();
 	
@@ -136,12 +133,12 @@ void Stage1::Disp(){
 	
 
 	//救出(どせいが下に落ちた場合の処理)
-	if(PlayerPos.y<-50.0){
-		if(game > 0 && game < GAME_CLEAR){	//残機あり、クリアじゃない時
-			game--;
-			sprintf(str_a,"x%d",game);
+	if( PlayerPos.y<-50.0 ){
+		if( game_ziki > 0 && game_ziki < GAME_CLEAR ){	//残機あり、クリアじゃない時
+			game_ziki--;
+			sprintf(str_ziki, "x%d", game_ziki);
 		}
-		if(game>0){
+		if( game_ziki > 0 ){
 			//初期位置へ戻す
 			PublicData->Player.ResetPos(0.0, 10.0, (PlayerPos.z>210.0 ? 210.0 : 0.0) );
 		}
@@ -194,16 +191,16 @@ void Stage1::Disp(){
 	
 	//クリア判定
 	if( objg5.onCLEAR ){
-		game = GAME_CLEAR;
+		game_ziki = GAME_CLEAR;
 	}
 	//MISS または CLEAR の時の処理
-	if( game == GAME_CLEAR ){	//CLEAR
-		glCallList(DisplayList_CLEAR);	//クリア表示
+	if( game_ziki == GAME_CLEAR ){	//CLEAR
+		glCallList( png_clear.DisplayList );	//クリア表示
 		if(game_timer++ > 120){
 			ChangeStage( new Stage2(PublicData) );	//Stage2へ進む
 		}
-	}else if( game <= 0 ){	//MISS
-		glCallList(DisplayList_MISS);	//ミス表示
+	}else if( game_ziki <= 0 ){	//MISS
+		glCallList( png_miss.DisplayList );	//ミス表示
 		if(game_timer++ > 60){
 			ChangeStage( new Stage0(PublicData) );	//Stage0に戻る
 		}
@@ -213,9 +210,7 @@ void Stage1::Disp(){
 //2Dの描画
 void Stage1::Disp2D(int Width, int Height){
 	glColor4f(0.0,0.0,0.0, 1.0);	//カラー
-	DRAW_STRING(10, 10, str_a, GLUT_BITMAP_TIMES_ROMAN_24);
-//	DRAW_STRING(10, 75, str_t, GLUT_BITMAP_TIMES_ROMAN_24);
-//	DRAW_STRING(10, 50, str, GLUT_BITMAP_TIMES_ROMAN_24);
+	DRAW_STRING(10, 10, str_ziki, GLUT_BITMAP_TIMES_ROMAN_24);
 }
 
 //入力処理
@@ -238,11 +233,10 @@ OBJgroup1::OBJgroup1() : ita(24.0, 24.0)
 	Vector3 v( 3.0, 3.0, 3.0 );
 	
 	box[0].Set(&v,"box1.png");
-	box[0].pos.z = 15.0;//-6.0;
-//	box[0].pos.y = -0.002; //colli.cppを修正したため、ずらす必要がなくなった。
+	box[0].pos.z = 15.0;
 	
 	box[1].Set(&v,"box1.png");
-	box[1].pos.z = 25.0;//5.0;
+	box[1].pos.z = 25.0;
 	
 	v.z = 4.0;
 	box[2].Set(&v,"box1.png");
@@ -251,13 +245,10 @@ OBJgroup1::OBJgroup1() : ita(24.0, 24.0)
 	//Ita初期化
 	ita.pos.y = 3.0;
 	//当たり判定用、初期化
-	colliIta.Set_xz4(ita.vertex);
-	//直方体OBJ登録
-	Vector3 v1[3];
-	v1[0].Set( 4.8, 2.2,  2.2);
-	v1[1].Set(-0.2, 7.0, -6.0);
-	v1[2].Set(-1.6, 1.8,  2.0);
-	box1.Set(v1, "box2.png");	//直方体
+	colliIta.Set_4(ita.vertex);
+	//回転する直方体OBJ登録
+	v.Set( 4.8, 2.2,  2.2);
+	box1.Set(&v, "box2.png");	//直方体
 	box1.pos.Set( 0.0, 3.0, 42.0);
 		
 	//バウンディングスフィア計算
@@ -289,7 +280,6 @@ OBJgroup1::OBJgroup1() : ita(24.0, 24.0)
 	
 	//位置セット
 	pos += offset;
-	//pos.z += 20.99;
 	pos.y -= 3.0;
 }
 

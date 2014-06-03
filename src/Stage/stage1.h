@@ -57,7 +57,6 @@ public:
 class OBJgroup4{
 private:
 	boxOBJ box[72];	//ボックス12*6つ
-	//Vector3 box_pos[3];	//boxは動くため、初期位置を記憶しておく
 	float radius;	//判定球の半径
 	Vector3 pos;	//位置
 	int box_action;	//boxの動作 
@@ -88,17 +87,10 @@ public:
  *-----------------------------------------------------------------------------------*/
 class Stage1 : public StageClass{
 private:
-	//ライト
 	GLfloat light0pos[4];	//ライトの位置
-	//char *fpstxt, fpstxtb[20];	//fps測定用
 	float cam_z, cam_r, cam_rx;	//カメラの向き z:距離 r:横周り rx:縦周り
-	//int key_on;	//キーの状態
-	//int yaziru;	//特殊キーの状態 矢印キー等
 	bool *keystate;	//キーの入力状態。PublicData->Key.state[256]へのショートカット
-	int total;	//トータルスコア
-	char str[64], str_t[64], str_a[64];	//スコア文字列
-	//sankakOBJ sanka;	//三角形クラス
-	//char c[512];
+	char str_ziki[64];	//残機表示用
 	Sound sound;	//サウンドクラス
 	//オブジェクトグループ
 	OBJgroup1 objg1;	//オブジェクトグループ１
@@ -106,20 +98,12 @@ private:
 	OBJgroup3 objg3;	//3
 	OBJgroup4 objg4;	//4
 	OBJgroup5 objg5;	//5
-	//背景
-	PNGtexture png_back;
-	GLuint textureBACK;	//背景のテクスチャ
-	GLuint DisplayList_BACK;	//背景のディスプレイリスト
-	//MISS
-	PNGtexture png_miss;
-	GLuint textureMISS;	//テクスチャ
-	GLuint DisplayList_MISS;	//ディスプレイリスト
-	//CLEAR
-	PNGtexture png_clear;
-	GLuint textureCLEAR;	//テクスチャ
-	GLuint DisplayList_CLEAR;	//ディスプレイリスト
+	//PNG画像
+	PNGtexture png_back; 	//背景
+	PNGtexture png_miss; 	//MISS
+	PNGtexture png_clear; 	//CLEAR
 	//ゲームクリアーorミス
-	char game;	//1〜5:残機 6:CLEAR 0:MISS
+	int game_ziki;	//1〜5:残機 100:CLEAR 0:MISS
 	int game_timer;	//ゲーム終了に使うtimer 
 
 	//共用クラスへのポインタ

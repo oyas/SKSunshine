@@ -5,25 +5,26 @@
 #include "stage2.h"
 
 #define NEXT_STAGE Stage1(PublicData)
+#define SETUMEI_COUNT 5		//何回点滅したら説明を表示するか
 
 Stage0::Stage0( PublicClass *pd ) : StageClass(pd)
 {
 	//背景作成
 	texture_BACK.load("yama.png");	//背景画像読み込み
 	float pos[4][3] = { {2.3,1.3,0.0}, {2.3,-1.3,0.0}, {-2.3,-1.3,0.0}, {-2.3,1.3,0.0} };
-	DisplayList_BACK = texture_BACK.CreateDisplayList(pos, false);	//ディスプレイリスト作成
+	texture_BACK.CreateDisplayList(pos, false);	//ディスプレイリスト作成
 	
 	//「スペースキーでスタート」作成
 	texture_Space.load("space.png");
-	DisplayList_Space = texture_Space.CreateDisplayList(NULL, true);
+	texture_Space.CreateDisplayList(NULL, true);
 	
 	//タイトル画像作成
 	texture_TITLE.load("title.png");
-	DisplayList_TITLE = texture_TITLE.CreateDisplayList(NULL, true);
+	texture_TITLE.CreateDisplayList(NULL, true);
 	
 	//説明画像作成
 	texture_Setumei.load("setumei.png");
-	DisplayList_Setumei = texture_Setumei.CreateDisplayList(NULL, true);
+	texture_Setumei.CreateDisplayList(NULL, true);
 	
 	//点滅用タイマー
 	timer = 0;
@@ -35,7 +36,7 @@ Stage0::Stage0( PublicClass *pd ) : StageClass(pd)
 
 void Stage0::Disp()
 {
-	glCallList(DisplayList_BACK);	//背景描画
+	glCallList( texture_BACK.DisplayList );	//背景描画
 	
 	//モデル行列初期化	
 	glLoadIdentity();
@@ -47,9 +48,9 @@ void Stage0::Disp()
 
 	//スペースキーが押されたとき
 	if( PublicData->Key.state[' '] ){
-		if(setumei < 5){
+		if( setumei < SETUMEI_COUNT ){
 			ChangeStage(new NEXT_STAGE);
-		}else if( setumei == 5 ){
+		}else if( setumei == SETUMEI_COUNT ){
 			//カウントが５で、スペースが押されたら、説明画面へ移行
 			setu_mes = true;
 		}else{ 
@@ -60,21 +61,22 @@ void Stage0::Disp()
 
 	//説明表示
 	if( setu_mes ){
-		glCallList(DisplayList_Setumei);	//説明
+		glCallList( texture_Setumei.DisplayList );	//説明
 		if( !PublicData->Key.state[' '] ){	//スペースを離すまでsetumeiは加算されない
-			setumei++;
+			setumei = SETUMEI_COUNT + 1;
 		}
 		return;	//説明以外は表示しない
 	}
 	
-	glCallList(DisplayList_TITLE);	//タイトル描画
+	glCallList( texture_TITLE.DisplayList );	//タイトル描画
 	
 	//「スペースキーでスタート」の点滅表示
 	if( timer++ < 30 ){
-		glCallList(DisplayList_Space);	//「スペースキーでスタート」
-	}else if(timer>=60){
+		glCallList( texture_Space.DisplayList );	//「スペースキーでスタート」
+	}else if( timer >= 60 ){
 		timer=0;
-		if(setumei<5) setumei++;	//説明カウントを増加
+		if( setumei < SETUMEI_COUNT )
+			setumei++;	//説明カウントを増加
 	}
 }
 

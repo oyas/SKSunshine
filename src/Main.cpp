@@ -179,6 +179,9 @@ void Disp(void)
 	glPopMatrix(); //Pop
 	glMatrixMode(GL_PROJECTION); 
 	glPopMatrix(); //Pop
+
+	//ステージ変更処理
+	if( NextStage ) toNextStage();
 }
 
 // 画面描き換え
@@ -187,8 +190,6 @@ void Display(){
 	Disp();
 	//ダブルバッファ入れ替え
 	glutSwapBuffers();
-	//ステージ変更処理
-	if( NextStage ) toNextStage();
 }
 
 
@@ -202,16 +203,12 @@ void Timer(int value){
 	glutTimerFunc( TIMER_WAIT, Timer, 0);
 	glutSwapBuffers();	//ダブルバッファ入れ替え
 	Disp();	//次フレームの描画
-	//ステージ変更処理
-	if( NextStage ) toNextStage();
 }
 
 // アイドリング時の処理
 void Idle(void)
 {
 	glutPostRedisplay();	// 暇な時に再描画
-	//ステージ変更処理
-	if( NextStage ) toNextStage();
 }
 
 // ウィンドウサイズ変更
@@ -221,9 +218,6 @@ void Reshape(int x, int y)
 	WindowWidth = x;
 	WindowHeight = y;
 	
-	//　サイズチェック
-//	if( WindowWidth < 1 ) WindowWidth = 1;
-//	if( WindowHeight < 1 ) WindowHeight = 1;
 	//　ウィンドウサイズを16:9に制限
 	if( !FullScreenMode && (float)WindowWidth / (float)WindowHeight > 16.0 / 9.0 ){
 		glutReshapeWindow( WindowHeight * 16 / 9 , WindowHeight );
@@ -270,8 +264,8 @@ void PassiveMotion(int x, int y)
 // キーボード処理
 void Keyboard(unsigned char key, int x, int y)
 {
-	Stage->Input(SC_INPUT_KEY_DOWN, (int)key, x, y);
 	PublicData->Key.SetKeyState(key, true);
+	Stage->Input(SC_INPUT_KEY_DOWN, (int)key, x, y);
 	
 	switch ( key ){
 	case '\033':	//Esc
@@ -284,15 +278,15 @@ void Keyboard(unsigned char key, int x, int y)
 //キーが離された
 void KeyboardUp(unsigned char key, int x, int y)
 {
-	Stage->Input(SC_INPUT_KEY_UP, (int)key, x, y);
 	PublicData->Key.SetKeyState(key, false);
+	Stage->Input(SC_INPUT_KEY_UP, (int)key, x, y);
 }
 
 // 特殊キー処理
 void Special(int key, int x, int y)
 {
-	Stage->Input(SC_INPUT_SPECIALKEY_DOWN, key, x, y);
 	PublicData->Key.SetSpecialKeyState(key, true);
+	Stage->Input(SC_INPUT_SPECIALKEY_DOWN, key, x, y);
 	
 	switch ( key )
 	{
@@ -365,8 +359,8 @@ void Special(int key, int x, int y)
 // 特殊キー処理
 void SpecialUp(int key, int x, int y)
 {
-	Stage->Input(SC_INPUT_SPECIALKEY_UP, key, x, y);
 	PublicData->Key.SetSpecialKeyState(key, false);
+	Stage->Input(SC_INPUT_SPECIALKEY_UP, key, x, y);
 }
 
 
@@ -382,8 +376,8 @@ void FullScreen(void)
 	static int beforeWidth;
 	static int beforeHeight;
 	FullScreenMode = !FullScreenMode;
-	if ( FullScreenMode )
-	{	//フルスクリーンへ
+	if ( FullScreenMode ){
+		//フルスクリーンへ
 		beforeWidth = WindowWidth;
 		beforeHeight = WindowHeight;
 		glutFullScreen();
@@ -396,12 +390,12 @@ void FullScreen(void)
 #endif
 }
 
-//ステージ変更
+//ステージ変更(Stageクラスから呼ばれる)
 void ChangeStage(StageClass* s)
 {
 	NextStage = s;
 }
-//次のステージへ変更処理
+//次のステージへ変更処理(Disp()からのみ呼ばれる)
 void toNextStage(){
 	delete Stage;
 	Stage = NextStage;
@@ -413,7 +407,8 @@ void Close(void)
 {
 	printf("finish! - Main\n");
 	//ゲームモード終了
-	if(glutGameModeGet(GLUT_GAME_MODE_ACTIVE)) glutLeaveGameMode();
+	if( glutGameModeGet(GLUT_GAME_MODE_ACTIVE) )
+		glutLeaveGameMode();
 	
 	//ステージクラスを破棄する。デストラクタが呼ばれる。
 	delete Stage;
