@@ -1,6 +1,6 @@
 # SKSunshine
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/AFtok0_41J0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+[![プレイ動画](https://img.youtube.com/vi/AFtok0_41J0/0.jpg)](https://youtu.be/AFtok0_41J0)
 
 スーパーくねくねサンシャイン。
 文化祭出展作品。  
